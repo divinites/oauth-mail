@@ -15,8 +15,8 @@ Gmail setup is quite simple,
 2. Download the json file to oath-mail directory, named it with whatever you want.
 
 3. Now you have two options:
-   a. Open "mail.sublime-settings", put your json file's name behind the entry "client_secret_file" and that's it.
-   b. Open the downloaded json file, create two entries "client_id" and "client_secret" and fill in the correct value according to your downloaded file.
+   - Open "mail.sublime-settings", put your json file's name behind the entry "client_secret_file" and that's it.
+   - Open the downloaded json file, create two entries "client_id" and "client_secret" and fill in the correct value according to your downloaded file.
 
 ####  Microsoft Mail settings:
 
