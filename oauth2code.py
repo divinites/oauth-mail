@@ -14,7 +14,6 @@ cwd = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(cwd)
 os.chdir(cwd)
 
-
 NECESSARY_PARAMETERS = ("client_secret", "auth_uri", "token_uri", "client_id")
 
 
@@ -26,7 +25,6 @@ def find_type(client_secret_file):
 
 
 class OAuth2:
-
     def __init__(self,
                  client_secret_json_file=None,
                  client_id=None,
@@ -67,14 +65,14 @@ class OAuth2:
                 break
         if self.cache_file:
             self._load_cached_token()
-            if self.expires_in+self.acquired_time - 10 < time.time():
+            if self.expires_in + self.acquired_time - 10 < time.time():
                 self._refresh_token()
         else:
             code = self._acquire_code()
             self._get_token(code)
 
     def _load_cached_token(self):
-        with open("cache/"+self.cache_file, 'r') as cache_file:
+        with open("cache/" + self.cache_file, 'r') as cache_file:
             root = json.load(cache_file)
             self.access_token = root["access_token"]
             self.acquired_time = root["acquired_time"]
@@ -84,8 +82,9 @@ class OAuth2:
 
     def _save_in_cache(self, root):
         if not self.cache_file:
-            self.cache_file = base64.b64encode(self.config["client_id"].encode("utf-8")).decode("utf-8")
-        with open("cache/"+self.cache_file, 'w') as cache_file:
+            self.cache_file = base64.b64encode(
+                self.config["client_id"].encode("utf-8")).decode("utf-8")
+        with open("cache/" + self.cache_file, 'w') as cache_file:
             json.dump(root, cache_file)
 
     def set_scope(self, scope):
@@ -95,6 +94,7 @@ class OAuth2:
         self._get_cache_file("cache")
 
 # Just replicate Google's API
+
     @staticmethod
     def url_add(url, text):
         return '{0}/{1}'.format(url, text)
@@ -147,7 +147,8 @@ class OAuth2:
         params['code'] = code
         params['redirect_uri'] = self.config["redirect_uri"]
         params['grant_type'] = 'authorization_code'
-        response = urlopen(self.config["token_uri"], urlencode(params).encode('utf-8')).read()
+        response = urlopen(self.config["token_uri"],
+                           urlencode(params).encode('utf-8')).read()
         root = json.loads(response.decode('utf-8'))
         self.access_token = root["access_token"]
         if "refresh_token" in root.keys():
@@ -164,7 +165,8 @@ class OAuth2:
         params['client_secret'] = self.config["client_secret"]
         params['refresh_token'] = self.refresh_token
         params['grant_type'] = 'refresh_token'
-        response = urlopen(self.config["token_uri"], urlencode(params).encode('utf-8')).read()
+        response = urlopen(self.config["token_uri"],
+                           urlencode(params).encode('utf-8')).read()
         root = json.loads(response.decode('utf-8'))
         self.access_token = root["access_token"]
         root["acquired_time"] = time.time()
@@ -175,7 +177,7 @@ class OAuth2:
 
     def gen_auth_string(self, username, base64_encode=False):
         if self.acquired_time and self.expires_in:
-            if self.acquired_time+self.expires_in < time.time():
+            if self.acquired_time + self.expires_in < time.time():
                 self._refresh_token(True)
         authstr = 'user={0}\1auth=Bearer {1}\1\1'.format(username,
                                                          self.access_token)
@@ -193,7 +195,6 @@ def _encode(strings):
 
 
 class RedirectHandler(http.server.BaseHTTPRequestHandler):
-
     def do_GET(s):
         s.send_response(200)
         s.send_header("Content-type", "text/html")
