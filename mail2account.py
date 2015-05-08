@@ -6,7 +6,6 @@ from ssl import SSLError
 
 
 class SettingHandler:
-
     def __init__(self, setting_file):
         self.accounts = {}
         self.settings = sublime.load_settings(setting_file)
@@ -19,9 +18,7 @@ class SettingHandler:
             mailbox_list.append(mailbox["identity"])
         return mailbox_list
 
-    def add_mailbox(self,
-                    identity,
-                    name,
+    def add_mailbox(self, identity, name,
                     default='no',
                     smtp_server=None,
                     smtp_port=25,
@@ -77,12 +74,9 @@ class Account:
             client_id = self.mailbox["parameters"]["client_id"]
             client_secret = self.mailbox["parameters"]["client_secret"]
 
-        self.account = oauth2code.OAuth2(client_secret_json_file,
-                                         client_id,
-                                         client_secret,
-                                         self.MAIL_SCOPE,
-                                         self.AUTH_URI,
-                                         self.TOKEN_URI,
+        self.account = oauth2code.OAuth2(client_secret_json_file, client_id,
+                                         client_secret, self.MAIL_SCOPE,
+                                         self.AUTH_URI, self.TOKEN_URI,
                                          self.REDIRECT_URI)
 
     def set(self, parameter, value):
@@ -93,7 +87,8 @@ class GenericSender(Account):
     def __init__(self, setting_file, identity):
         super(GenericSender, self).__init__(setting_file, identity)
         try:
-            self.smtp_conn = smtplib.SMTP_SSL(self.SMTP_SERVER, self.SSL_SMTP_PORT)
+            self.smtp_conn = smtplib.SMTP_SSL(self.SMTP_SERVER,
+                                              self.SSL_SMTP_PORT)
         except SSLError:
             self.smtp_conn = smtplib.SMTP(self.SMTP_SERVER, self.SSL_SMTP_PORT)
         self.smtp_conn.ehlo()
