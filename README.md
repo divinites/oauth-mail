@@ -31,3 +31,7 @@ Gmail setup is quite simple,
 
 
 That's it. In the first time you use the send mail, it will redirect your an authorization page, where you can click "yes" for authorization, after you see the page "the authentification flow has completed", you can cloase that page and let the progam take in charge everything. In the next time and what soever, you can instantly send emails without any noticable interaction with email server, since the program will automatically deal with everything and refresh the access_token when necessary. 
+
+## Thanks:
+
+Special thanks to [klorenz's project sublime-email](https://bitbucket.org/klorenz/sublimeemail/) and many stackoverflow answers.
