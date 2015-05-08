@@ -1,0 +1,28 @@
+{
+    "Mailboxs": [
+
+                    {
+                        "identity": "xxxxxx@gmail.com",
+
+                        "parameters": {
+
+                                        "name": "xxxxx",
+                                        "signature": "xxxxx",
+                                        "client_secret_file": "xxxxxx",
+                                        "default": "yes"
+                                      }
+                    },
+
+                    {
+                        "identity": "xxxxx@outlook.com",
+                        "parameters": {
+
+                                        "name": "xxxxxxxx",
+                                        "client_id": "xxxxxxxx",
+                                        "client_secret": "xxxxxxxxxxxx",
+                                        "default": "no"
+                                     }
+                    }
+
+                ]
+}

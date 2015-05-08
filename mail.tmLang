@@ -1,0 +1,113 @@
+name     : E-Mail
+scopeName: text.email
+fileTypes: <eml email>
+uuid     : ecc7917d-555b-4005-a65a-40f92aafe508
+# foldingStartMarker: (?x)
+# foldingEndMarker  : (?x)
+# keyEquivalent :
+
+# add here tokens you can use later, like:
+#
+#   single_whitespace = \s
+#   whitespace = {single_whitespace}*
+#
+hws = [\t\x{00000020}]
+eof = ^\n\n
+
+MAIN
+    # start here your main patterns
+    #header-field
+
+header-field
+    meta.address.sender.email
+        ^(?i)(?=From\s*:)
+        ^(?!{hws})
+        #email-addresslist
+
+    meta.address.recipient.to.email
+        ^(?i)(?=To\s*:)
+        ^(?!{hws})
+        
+        #email-addresslist
+
+    meta.address.recipient.cc.email
+        ^(?i)(?=Cc\s*:)
+        ^(?!{hws})
+        
+        #email-addresslist
+
+    meta.address.recipient.bcc.email
+        ^(?i)(?=Bcc\s*:)
+        ^(?!{hws})
+        
+        #email-addresslist
+
+    meta.attachment.email
+        ^(?i)(attach(?:ments?)?)\s*(:)\s*
+        1: keyword.email
+        2: keyword.operator.email
+        ^(?!{hws})
+
+        #email-attachment
+
+    meta.subject.email
+        ^(?i)(subject)\s*(:)\s*
+        1: keyword.email
+        2: keyword.operator.email
+
+        ^(?!{hws})
+
+        string.unquoted.subject.email
+            (?=\S)
+            ^(?!{hws})
+
+    <string.unquoted.header.email>
+        ^(Date)\s*(:)
+        1: keyword.email
+        2: keyword.operator.email
+
+        ^(?!{hws})
+
+    meta.message.email
+        ^\s*$
+
+        {eof}
+
+        #email-message
+
+email-addresslist
+    <string.unquoted.address.email>
+        ^(?i)(From|To|Cc|Bcc)\s*(:)\s*
+        1: keyword.email
+        2: keyword.operator.email
+
+        ^(?!\s)
+
+email-attachment
+    <string.unquoted.attachment.email>
+        ^\s*([-\*\+])\s*
+        1: keyword.operator.email
+        $
+
+email-message
+    <meta.embedded.restructuredtext>
+        ^(?i)(\#!re?st)
+        1: keyword.operator.type.email
+
+        (?=^--\s*\n|{eof})
+
+        #text.restructuredtext
+
+    <meta.embedded.restructuredtext>
+        ^(?i)(\#!markdown)
+        1: keyword.operator.type.email
+
+        (?=^--\s*\n|{eof})
+
+        #text.html.markdown
+
+    <support.other.signature>
+        ^(--)$
+        1: keyword.operator.email
+
+        {eof}
