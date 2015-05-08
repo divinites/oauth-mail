@@ -15,7 +15,7 @@ _ATTACHMENT_FLAG = 'meta.attachment string'
 _SUBJECT_FLAG = 'meta.subject string'
 _MAIL_PREFIX_FLAG = 'text.email '
 _MESSAGE_FLAG = 'meta.message'
-_SYNTAX_PATH = "Packages/sublime-mail/mail.tmLanguage"
+_SYNTAX_PATH = globals()['__builtins__']['__package__']+"/mail.tmLanguage"
 _SUCCESS_MESSAGE = "Message Successfully Sent."
 
 _MAIL_CLASS_DICT = {
@@ -82,7 +82,7 @@ class SendMailThread(threading.Thread):
     def run(self):
         def check_mailbox_type(identity):
             checker_dict = {
-                "outlook": "\S+@[live|hotmail].+",
+                "outlook": "\S+@[live|hotmail|outlook].+",
                 "gmail": "\S+@[gmail|googlemail].+"
             }
             for name, checker in checker_dict.items():
