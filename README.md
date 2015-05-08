@@ -32,6 +32,21 @@ Gmail setup is quite simple,
 
 That's it. In the first time you use the send mail, it will redirect your an authorization page, where you can click "yes" for authorization, after you see the page "the authentication flow has completed", you can close that page and let the program take in charge everything. In the next time and what soever, you can instantly send emails without any noticeable interaction with email server, since the program will automatically deal with everything and refresh the access_token when necessary. 
 
+## Future Development:
+
+1. This project is still in its early stage, now it suppport sending mails via Outlook mails and Gmails.
+2. Next step:
+   a) Adding signature support
+   b) Adding IMAP support, so users will be able to receive recent emails
+   c) Adding reply and forwarding command
+
+I have no intention to make it a full functional email agent with complicated rules, since we already have so many execellent programs. I will keep it light-weight, only necessary functions will be added.
+
+## Change Logs:
+
+v.0.1.1 The first commitment
+
+
 ## Thanks:
 
 Special thanks to [klorenz's project sublime-email](https://bitbucket.org/klorenz/sublimeemail/) and many stack-overflow answers.
