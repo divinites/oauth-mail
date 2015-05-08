@@ -35,10 +35,10 @@ That's it. In the first time you use the send mail, it will redirect your an aut
 ## Future Development:
 
 1. This project is still in its early stage, now it suppport sending mails via Outlook mails and Gmails.
-2. Next step:
-   a) Adding signature support
-   b) Adding IMAP support, so users will be able to receive recent emails
-   c) Adding reply and forwarding command
+2. Next step: 
+   - Adding signature support
+   - Adding IMAP support, so users will be able to receive recent emails
+   - Adding reply and forwarding command
 
 I have no intention to make it a full functional email agent with complicated rules, since we already have so many execellent programs. I will keep it light-weight, only necessary functions will be added.
 
