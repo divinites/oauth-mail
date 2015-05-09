@@ -15,23 +15,28 @@ _ATTACHMENT_FLAG = 'meta.attachment string'
 _SUBJECT_FLAG = 'meta.subject string'
 _MAIL_PREFIX_FLAG = 'text.email '
 _MESSAGE_FLAG = 'meta.message'
-_SYNTAX_PATH = globals()['__builtins__']['__package__']+"/mail.tmLanguage"
+_SYNTAX_PATH = "Packages/{0}/mail.tmLanguage".format(__package__)
 _SUCCESS_MESSAGE = "Message Successfully Sent."
+_FAIL_MESSAGE = "Message failed."
 
-_MAIL_CLASS_DICT = {
-    "gmail": {
-        "smtp": mail2account.GoogleSender,
-        "imap": mail2account.GoogleReceiver
-    },
-    "outlook": {
-        "smtp": mail2account.OutlookSender,
-        "imap": mail2account.OutlookReceiver
-    },
-    "generic": {
-        "smtp": mail2account.GenericSender,
-        "imap": mail2account.GenericReceiver
-    }
-}
+_MAIL_CLASS_DICT = {"gmail":
+                    {
+                        "smtp": mail2account.GoogleSender,
+                        "imap": mail2account.GoogleReceiver
+                    },
+
+                    "outlook":
+                    {
+                        "smtp": mail2account.OutlookSender,
+                        "imap": mail2account.OutlookReceiver
+                    },
+
+                    "generic":
+                    {
+                        "smtp": mail2account.GenericSender,
+                        "imap": mail2account.GenericReceiver
+                    }
+                    }
 
 
 def _RECIPIENTS_FLAG(typ):
@@ -42,15 +47,8 @@ class MailWriteCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
         return True
 
-    def run(self,
-            From="",
-            To="",
-            Cc="",
-            Bcc="",
-            Subject="",
-            Body="",
-            Signature=None,
-            Attachments=[]):
+    def run(self, From="", To="", Cc="", Bcc="", Subject="",
+            Body="", Signature=None, Attachments=[]):
 
         view = self.window.new_file()
         settings = mail2account.SettingHandler(_SETTING_FILE)
@@ -73,6 +71,7 @@ class MailWriteCommand(sublime_plugin.WindowCommand):
 
 
 class SendMailThread(threading.Thread):
+
     def __init__(self, msg, identity, recipients):
         threading.Thread.__init__(self)
         self.msg = msg
@@ -80,11 +79,10 @@ class SendMailThread(threading.Thread):
         self.identity = identity
 
     def run(self):
+
         def check_mailbox_type(identity):
-            checker_dict = {
-                "outlook": "\S+@[live|hotmail|outlook].+",
-                "gmail": "\S+@[gmail|googlemail].+"
-            }
+            checker_dict = {"outlook": "\S+@[live|hotmail].+",
+                            "gmail": "\S+@[gmail|googlemail].+"}
             for name, checker in checker_dict.items():
                 prog = re.compile(checker)
                 result = prog.match(identity)
@@ -98,6 +96,9 @@ class SendMailThread(threading.Thread):
                                                       self.identity)
         if account.smtp_authenticate():
             account.send_mail(self.recipients, self.msg)
+            sublime.status_message(_SUCCESS_MESSAGE)
+        else:
+            sublime.status_message(_FAIL_MESSAGE)
 
 #        self.server_account.authenticate(0)
 #        try:
@@ -105,7 +106,7 @@ class SendMailThread(threading.Thread):
 #                                          self.msg.as_string())
 #        except Exception as e:
 #            sublime.error_message("Sending failed: %s" % e)
-        sublime.status_message(_SUCCESS_MESSAGE)
+
 
 
 class MailSendCommand(sublime_plugin.WindowCommand):
@@ -123,7 +124,7 @@ class MailSendCommand(sublime_plugin.WindowCommand):
         view = self.window.active_view()
 
         def get_text(selector, joiner=" "):
-            regions = view.find_by_selector(_MAIL_PREFIX_FLAG + selector)
+            regions = view.find_by_selector(_MAIL_PREFIX_FLAG+selector)
             result = joiner.join([view.substr(r) for r in regions])
             return result
 
@@ -144,8 +145,8 @@ class MailSendCommand(sublime_plugin.WindowCommand):
         for r in view.find_by_selector(_ATTACHMENT_FLAG):
             attachment = view.substr(r)
             if not os.path.exists(attachment):
-                sublime.error_message("Attachment does not exist: %s" %
-                                      attachment)
+                sublime.error_message("Attachment does not exist: %s"
+                                      % attachment)
                 return
             attachments.append(attachment)
 
@@ -251,6 +252,6 @@ class SendAsMailCommand(sublime_plugin.WindowCommand):
         if not selected:
             selected = view.substr(sublime.Region(0, view.size()))
 
-        split_line = "-" * 20 + "\n"
+        split_line = "-"*20+"\n"
 
-        self.window.run_command('mail_write', {'Body': split_line + selected})
+        self.window.run_command('mail_write', {'Body': split_line+selected})
