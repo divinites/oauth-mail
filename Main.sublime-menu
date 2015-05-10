@@ -1,0 +1,37 @@
+[
+	{
+		"caption": "Tools",
+		"mnemonic": "T",
+		"id": "tools",
+		"children": [
+			{
+				"caption": "Packages",
+				"mnemonic": "P",
+				"id": "packages",
+				"children": [
+					{
+						"caption": "Oauth Mail",
+						"children": [
+							{
+								"command": "open_file",
+								"args": {"file": "${packages}/Oauth Mail/Default.sublime-keymap"},
+								"caption": "Keymap – Default"
+							},
+							{
+								"command": "open_file",
+								"args": {"file": "${packages}/Oauth Mail/User.sublime-keymap"},
+								"caption": "keymap – User"
+							},
+							{ "caption": "-" },
+							{
+								"command": "open_file",
+								"args": {"file": "${packages}/Oauth Mail/Mail.sublime-settings"},
+								"caption": "Mail Settings"
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]

@@ -1,0 +1,17 @@
+{
+   "linux": {
+        "*": [
+            "oauthlib",
+            "requests",
+            "requests-oauthlib",
+            "ssl-linux"
+        ]
+    },
+    "*": {
+        "*": [
+            "oauthlib",
+            "requests",
+            "requests-oauthlib"
+        ]
+   }
+}

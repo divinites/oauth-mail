@@ -18,10 +18,5 @@
         "caption": "Sublime-Mail: Send as Attachment", 
         "args": {}, 
         "command": "attach_this_file"
-    }, 
-    {
-        "caption": "Sublime-Mail: Add to Addressbook", 
-        "args": {}, 
-        "command": "mail_add_to_addressbook"
     }
 ]
