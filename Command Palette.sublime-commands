@@ -1,22 +1,37 @@
 [
     {
-        "caption": "Sublime-Mail: Write E-Mail", 
+        "caption": "Oauth Mail: Write E-Mail", 
         "args": {}, 
         "command": "mail_write"
     }, 
     {
-        "caption": "Sublime-Mail: Send E-Mail", 
+        "caption": "Oauth Mail: Send E-Mail", 
         "args": {}, 
         "command": "mail_send"
     }, 
     {
-        "caption": "Sublime-Mail: Send As Mail", 
+        "caption": "Oauth Mail: Send As Mail", 
         "args": {}, 
         "command": "send_as_mail"
     }, 
     {
-        "caption": "Sublime-Mail: Send as Attachment", 
+        "caption": "Oauth Mail: Send as Attachment", 
         "args": {}, 
         "command": "attach_this_file"
+    }, 
+    {
+        "caption": "Oauth Mail: Add to Addressbook", 
+        "args": {}, 
+        "command": "mail_add_to_addressbook"
+    },
+    {
+        "caption": "Oauth Mail: Show Last E-Mail", 
+        "args": {}, 
+        "command": "show_last_mail"
+    },
+    {
+        "caption": "Oauth Mail: Show E-Mail List", 
+        "args": {}, 
+        "command": "list_recent_mail"
     }
 ]

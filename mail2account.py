@@ -3,6 +3,10 @@ import oauth2mail
 import imaplib
 import smtplib
 from ssl import SSLError
+import email
+from chardet import detect
+from email.header import decode_header
+import re
 
 
 class SettingHandler:
@@ -122,10 +126,104 @@ class GenericReceiver(Account):
     def __init__(self, setting_file, identity):
         super(GenericReceiver, self).__init__(setting_file, identity)
         self.imap_conn = imaplib.IMAP4_SSL(self.IMAP_SERVER)
+        if not self.imap_authenticate():
+            raise Exception("Cannot pass the authorization.")
 
     def imap_authenticate(self):
         authstr = self.account.gen_auth_string(self.identity, False)
-        self.imap_conn.authenticate('XOAUTH2', lambda x: authstr)
+        auth_message = self.imap_conn.authenticate('XOAUTH2',
+                                                   lambda x: authstr)
+        if auth_message[0] == 'OK':
+            return True
+        return False
+
+    def fetch_email(self, email_id=None, location='INBOX'):
+        def auto_decode(str_body):
+            detected_result = detect(str_body)
+            codec = detected_result['encoding']
+            return str_body.decode(codec)
+
+        def subject_dealing(raw_subject):
+            subject = ''
+            decoded_subject = decode_header(raw_subject)
+            if decoded_subject[0][1] is None:
+                subject = decoded_subject[0][0]
+            else:
+                subject = decoded_subject[0][0].decode(decoded_subject[0][1])
+            subject = subject.replace('\r', '')
+            subject = subject.replace('\n', '')
+            return subject
+
+        def date_dealing(raw_date_str):
+            return raw_date_str[6:26]
+
+        def from_dealing(from_str, flag="name"):
+            real_from = ''
+            decoded_from = decode_header(from_str)
+            tem_str = []
+            for i in range(len(decoded_from)):
+                if decoded_from[i][1] is None:
+                    tem_str.append(decoded_from[i][0])
+                else:
+                    tem_str.append(decoded_from[0][0].decode(decoded_from[0][1]))
+            new_tem_str = []
+            for i in tem_str:
+                new_tem_str.append(str(i))
+            address = ' '.join(new_tem_str)
+            if flag == "full":
+                return address
+            else:
+                try:
+                    m = re.search(r'^.*(?=(<))', address)
+                    real_from = m.group()
+                    return real_from
+                except:
+                    return address
+        mail_body = None
+        status, last_email_sequence = self.imap_conn.select(location)
+        if email_id is None:
+            target_email_id = last_email_sequence[0].decode('utf-8', 'ignore')
+        else:
+            target_email_id = email_id
+        msge = {}
+        t, raw_msg = self.imap_conn.fetch(target_email_id, 'BODY[]')
+        t, header = self.imap_conn.fetch(target_email_id, 'BODY.PEEK[HEADER]')
+        msg = email.message_from_string(raw_msg[0][1].decode('utf-8', 'ignore'))
+        for part in msg.walk():
+            if part.get_content_type() == "text/plain":
+                mail_body = auto_decode(part.get_payload(decode=True))
+                msge["body"] = mail_body.replace('\r', '')
+        header_obj = email.message_from_string(header[0][1].decode('utf-8'))
+        msge['id'] = target_email_id
+        msge["header"] = {}
+        for key in ("subject", 'date', 'from', "cc", "bcc", "to"):
+            if not isinstance(header_obj[key], str):
+                try:
+                    msge["header"][key] = header_obj[key].decode('utf-8')
+                except:
+                    msge["header"][key] = ' '
+            else:
+                msge['header'][key] = header_obj[key]
+        msge["address"] = from_dealing(msge["header"]["from"], "full")
+        for key in ("from", "cc", "bcc", "to"):
+            msge["header"][key] = from_dealing(msge["header"][key], "name")
+        msge["header"]["subject"] = subject_dealing(msge["header"]["subject"])
+        msge["header"]["date"] = date_dealing(msge["header"]["date"])
+
+        return (msge)
+
+    def search_email(self, criteria, location='INBOX'):
+        status, email_sequence = self.imap_conn.select(location)
+        t, id_sequence = self.imap_conn.search(None, criteria)
+        mail_ids = id_sequence[0].decode('utf-8').split(' ')
+        return mail_ids
+
+    def fetch_selected_email(self, criteria, location='INBOX'):
+        id_sequence = self.search_email(criteria, location)
+        msg_list = []
+        for mail_id in id_sequence:
+            msg_list.append(self.fetch_email(mail_id, location))
+        return msg_list
 
 
 class GoogleAccount(Account):

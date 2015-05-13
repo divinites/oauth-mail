@@ -8,6 +8,7 @@ import sublime_plugin
 import threading
 import sublime
 import re
+import queue
 
 _SETTING_FILE = "mail.sublime-settings"
 _SENDER_FLAG = 'meta.address.sender string'
@@ -19,24 +20,20 @@ _SYNTAX_PATH = "Packages/{0}/mail.tmLanguage".format(__package__)
 _SUCCESS_MESSAGE = "Message Successfully Sent."
 _FAIL_MESSAGE = "Message failed."
 
-_MAIL_CLASS_DICT = {"gmail":
-                    {
-                        "smtp": mail2account.GoogleSender,
-                        "imap": mail2account.GoogleReceiver
-                    },
-
-                    "outlook":
-                    {
-                        "smtp": mail2account.OutlookSender,
-                        "imap": mail2account.OutlookReceiver
-                    },
-
-                    "generic":
-                    {
-                        "smtp": mail2account.GenericSender,
-                        "imap": mail2account.GenericReceiver
-                    }
-                    }
+_MAIL_CLASS_DICT = {
+    "gmail": {
+        "smtp": mail2account.GoogleSender,
+        "imap": mail2account.GoogleReceiver
+    },
+    "outlook": {
+        "smtp": mail2account.OutlookSender,
+        "imap": mail2account.OutlookReceiver
+    },
+    "generic": {
+        "smtp": mail2account.GenericSender,
+        "imap": mail2account.GenericReceiver
+    }
+}
 
 
 def _RECIPIENTS_FLAG(typ):
@@ -47,8 +44,15 @@ class MailWriteCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
         return True
 
-    def run(self, From="", To="", Cc="", Bcc="", Subject="",
-            Body="", Signature=None, Attachments=[]):
+    def run(self,
+            From="",
+            To="",
+            Cc="",
+            Bcc="",
+            Subject="",
+            Body="",
+            Signature=None,
+            Attachments=[]):
 
         view = self.window.new_file()
         settings = mail2account.SettingHandler(_SETTING_FILE)
@@ -71,7 +75,6 @@ class MailWriteCommand(sublime_plugin.WindowCommand):
 
 
 class SendMailThread(threading.Thread):
-
     def __init__(self, msg, identity, recipients):
         threading.Thread.__init__(self)
         self.msg = msg
@@ -79,10 +82,11 @@ class SendMailThread(threading.Thread):
         self.identity = identity
 
     def run(self):
-
         def check_mailbox_type(identity):
-            checker_dict = {"outlook": "\S+@[live|hotmail].+",
-                            "gmail": "\S+@[gmail|googlemail].+"}
+            checker_dict = {
+                "outlook": "\S+@[live|hotmail].+",
+                "gmail": "\S+@[gmail|googlemail].+"
+            }
             for name, checker in checker_dict.items():
                 prog = re.compile(checker)
                 result = prog.match(identity)
@@ -108,7 +112,6 @@ class SendMailThread(threading.Thread):
 #            sublime.error_message("Sending failed: %s" % e)
 
 
-
 class MailSendCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
         view = self.window.active_view()
@@ -124,7 +127,7 @@ class MailSendCommand(sublime_plugin.WindowCommand):
         view = self.window.active_view()
 
         def get_text(selector, joiner=" "):
-            regions = view.find_by_selector(_MAIL_PREFIX_FLAG+selector)
+            regions = view.find_by_selector(_MAIL_PREFIX_FLAG + selector)
             result = joiner.join([view.substr(r) for r in regions])
             return result
 
@@ -145,8 +148,8 @@ class MailSendCommand(sublime_plugin.WindowCommand):
         for r in view.find_by_selector(_ATTACHMENT_FLAG):
             attachment = view.substr(r)
             if not os.path.exists(attachment):
-                sublime.error_message("Attachment does not exist: %s"
-                                      % attachment)
+                sublime.error_message("Attachment does not exist: %s" %
+                                      attachment)
                 return
             attachments.append(attachment)
 
@@ -252,6 +255,135 @@ class SendAsMailCommand(sublime_plugin.WindowCommand):
         if not selected:
             selected = view.substr(sublime.Region(0, view.size()))
 
-        split_line = "-"*20+"\n"
+        split_line = "-" * 20 + "\n"
 
-        self.window.run_command('mail_write', {'Body': split_line+selected})
+        self.window.run_command('mail_write', {'Body': split_line + selected})
+
+
+class ShowLastMailCommand(sublime_plugin.WindowCommand):
+    def is_enabled(self):
+        return True
+
+    def run(self):
+        view = self.window.new_file()
+        view.set_syntax_file(_SYNTAX_PATH)
+        mailbox_queue = queue.Queue()
+        mail_queue = queue.Queue()
+        IMAP_thread = MailBoxConnectionThread(mailbox_queue,
+                                              "divinites@gmail.com")
+        IMAP_thread.start()
+        fetch_mail = FetchMailThread(None, mailbox_queue, mail_queue)
+        fetch_mail.start()
+        print_in_view = PrintMailInView(mail_queue, view)
+        print_in_view.start()
+
+
+class ListRecentMailCommand(sublime_plugin.WindowCommand):
+    def is_enable(self):
+        return True
+
+    def run(self):
+        view = self.window.new_file()
+        mailbox_queue = queue.Queue()
+        list_queue = queue.Queue()
+        IMAP_thread = MailBoxConnectionThread(mailbox_queue,
+                                              "divinites@gmail.com")
+        IMAP_thread.start()
+        list_mail = GetEmailListThread(mailbox_queue, list_queue, None)
+        list_mail.start()
+        print_in_view = PrintListInView(list_queue, view)
+        print_in_view.start()
+
+
+class MailBoxConnectionThread(threading.Thread):
+    def __init__(self, out_mailbox_queue, identity):
+        threading.Thread.__init__(self)
+        self.mailbox_queue = out_mailbox_queue
+        self.identity = identity
+        self.mailbox = mail2account.GoogleReceiver(_SETTING_FILE,
+                                                   self.identity)
+
+    def run(self):
+        self.mailbox_queue.put(self.mailbox)
+
+
+class GetEmailListThread(threading.Thread):
+    def __init__(self, in_mailbox_queue, out_list_queue, location=None):
+        threading.Thread.__init__(self)
+        self.mailbox_queue = in_mailbox_queue
+        self.list_queue = out_list_queue
+        if location is None:
+            self.location = 'INBOX'
+        else:
+            self.location = location
+
+    def run(self):
+        mailbox = self.mailbox_queue.get()
+        mail_list = mailbox.fetch_selected_email('(SINCE "11-MAY-2015")')
+        self.list_queue.put(mail_list)
+        self.mailbox_queue.put(mailbox)
+
+
+class FetchMailThread(threading.Thread):
+    def __init__(self,
+                 email_id=None,
+                 in_mailbox_queue=None,
+                 out_mail_queue=None,
+                 location=None):
+        threading.Thread.__init__(self)
+        self.email_id = email_id
+        self.mailbox_queue = in_mailbox_queue
+        self.mail_queue = out_mail_queue
+        self.body = None
+        if location is None:
+            self.location = 'INBOX'
+
+    def run(self):
+        mailbox = self.mailbox_queue.get()
+        msg = mailbox.fetch_email(self.email_id, self.location)
+        self.mail_queue.put(msg)
+        self.mailbox_queue.put(mailbox)
+
+
+class PrintListInView(threading.Thread):
+    def __init__(self, list_queue, view):
+        super(PrintListInView, self).__init__(self)
+        self.list_queue = list_queue
+        self.view = view
+
+    def run(self):
+        mail_list = self.list_queue.get()
+        snippet = ''
+        snippet += "{:<8}\t{:^30}\t\t{:^60}\t\t{:^30}\n".format("ID", "From",
+                                                                "Subject",
+                                                                "Time & Date")
+        for msg in reversed(mail_list):
+            mail_id = msg['id']
+            mail_subject = msg['header']["subject"]
+            mail_from = msg['header']["from"]
+            mail_date = msg['header']["date"]
+            if len(mail_subject) > 60:
+                mail_subject = mail_subject[:57] + '...'
+            snippet += "{:<8}\t{:<30}\t\t{:<60}\t\t{:^30}\n".format(
+                mail_id, mail_from, mail_subject, mail_date)
+        snippet += "\n"
+        self.view.run_command("insert_snippet", {"contents": snippet})
+
+
+class PrintMailInView(threading.Thread):
+    def __init__(self, mail_queue, view):
+        super(PrintMailInView, self).__init__(self)
+        self.mail_queue = mail_queue
+        self.view = view
+
+    def run(self):
+        msg = self.mail_queue.get()
+        snippet = ""
+        snippet += "From   : {}\n".format(msg['address'])
+        snippet += "To     : {}\n".format(msg['header']["to"])
+        snippet += "Cc     : {}\n".format(msg['header']["cc"])
+        snippet += "Bcc    : {}\n".format(msg['header']["bcc"])
+        snippet += "Subject: {}\n".format(msg['header']["subject"])
+        snippet += "\n"
+        snippet += "{}\n".format(msg["body"])
+        self.view.run_command("insert_snippet", {"contents": snippet})

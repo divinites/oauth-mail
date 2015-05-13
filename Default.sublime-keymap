@@ -1,0 +1,11 @@
+[
+        { "keys": [ "" ], 
+          "command": "mail_write",
+          "args": {}
+        },
+        { "keys": [ "" ], 
+          "command": "mail_send",
+          "args": {}
+        }
+
+]

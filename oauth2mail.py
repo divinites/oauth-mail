@@ -23,7 +23,6 @@ def find_type(client_secret_file):
 
 
 class OauthMailSession(OAuth2Session):
-
     def __init__(self,
                  client_id=None,
                  client=None,
@@ -38,8 +37,7 @@ class OauthMailSession(OAuth2Session):
                  client_secret=None,
                  auth_uri=None,
                  token_uri=None,
-                 cache_flag=True,
-                 **kwargs):
+                 cache_flag=True, **kwargs):
         _client_id = None
         if client_secret_json_file:
             with open(client_secret_json_file, 'r') as f:
@@ -60,15 +58,9 @@ class OauthMailSession(OAuth2Session):
             self.auth_uri = auth_uri
             self.token_uri = token_uri
 
-        super(OauthMailSession, self).__init__(_client_id,
-                                               client,
-                                               auto_refresh_url,
-                                               auto_refresh_kwargs,
-                                               scope,
-                                               redirect_uri,
-                                               token,
-                                               state,
-                                               token_updater)
+        super(OauthMailSession, self).__init__(
+            _client_id, client, auto_refresh_url, auto_refresh_kwargs, scope,
+            redirect_uri, token, state, token_updater)
         self.acquired_time = None
         self.expires_in = None
         self.cache_file = None
@@ -76,7 +68,7 @@ class OauthMailSession(OAuth2Session):
 
     def _token_is_cached(self):
         target = b64encode((self.client_id).encode('utf-8')).decode("utf-8")
-        filepaths = os.listdir("./cache")
+        filepaths = os.listdir("cache")
         if target in filepaths:
             self.cache_file = target
             return True
@@ -84,14 +76,14 @@ class OauthMailSession(OAuth2Session):
             return False
 
     def _token_expired(self):
-        if self.expires_in+self.acquired_time - 10 < time.time():
+        if self.expires_in + self.acquired_time - 10 < time.time():
             return True
         else:
             return False
 
     def _load_cached_token(self):
         if self._token_is_cached() is True:
-            with open("cache/"+self.cache_file, 'r') as cache_file:
+            with open("cache/" + self.cache_file, 'r') as cache_file:
                 root = json.load(cache_file)
                 self.token["access_token"] = root["access_token"]
                 self.acquired_time = root["acquired_time"]
@@ -109,15 +101,15 @@ class OauthMailSession(OAuth2Session):
             root["expires_in"] = self.expires_in
             root["acquired_time"] = time.time()
             self.acquired_time = root["acquired_time"]
-            self.cache_file = b64encode(self.client_id.encode("utf-8")).decode("utf-8")
-            with open("cache/"+self.cache_file, 'w') as cache_file:
+            self.cache_file = b64encode(self.client_id.encode("utf-8")).decode(
+                "utf-8")
+            with open("cache/" + self.cache_file, 'w') as cache_file:
                 json.dump(root, cache_file)
         else:
             return
 
     def _generate_auth_url(self, **kwargs):
-        return self.authorization_url(url=self.auth_uri,
-                                      **kwargs)
+        return self.authorization_url(url=self.auth_uri, **kwargs)
 
     def _acquire_code(self, **kwargs):
         def get_host_parameters(uri):
@@ -137,7 +129,8 @@ class OauthMailSession(OAuth2Session):
                 host_params = list(host_params)
                 host_params[1] += 1
                 host_params = tuple(host_params)
-        self.redirect_uri = "http://"+host_params[0]+":"+str(host_params[1])
+        self.redirect_uri = "http://" + host_params[0] + ":" + str(
+            host_params[1])
         auth_url = self._generate_auth_url(**kwargs)[0]
         webbrowser.open(auth_url, new=1, autoraise=True)
         httpd.handle_request()
@@ -166,7 +159,8 @@ class OauthMailSession(OAuth2Session):
         params['client_secret'] = self.client_secret
         params['refresh_token'] = self.token["refresh_token"]
         params['grant_type'] = 'refresh_token'
-        response = urlopen(self.token_uri, urlencode(params).encode('utf-8')).read()
+        response = urlopen(self.token_uri,
+                           urlencode(params).encode('utf-8')).read()
         root = json.loads(response.decode('utf-8'))
         self.token["access_token"] = root["access_token"]
         self.expires_in = root["expires_in"]
@@ -178,12 +172,12 @@ class OauthMailSession(OAuth2Session):
         if save is True:
             self._save_in_cache(root)
 
-    def gen_auth_string(self, username, base64_encode=False):
+    def gen_auth_string(self, identity, base64_encode=False):
         if self.acquired_time and self.expires_in:
             if self._token_expired():
                 self._refresh_token(True)
-        authstr = 'user={0}\1auth=Bearer {1}\1\1'.format(username,
-                                                         self.token["access_token"])
+        authstr = 'user={0}\1auth=Bearer {1}\1\1'.format(
+            identity, self.token["access_token"])
         if base64_encode:
             authstr = b64encode(_encode(authstr)).decode("utf-8")
         return authstr
@@ -198,7 +192,6 @@ def _encode(strings):
 
 
 class RedirectHandler(http.server.BaseHTTPRequestHandler):
-
     def do_GET(s):
         s.send_response(200)
         s.send_header("Content-type", "text/html")
