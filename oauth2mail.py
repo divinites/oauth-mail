@@ -40,7 +40,8 @@ class OauthMailSession(OAuth2Session):
                  cache_flag=True, **kwargs):
         _client_id = None
         if client_secret_json_file:
-            with open(client_secret_json_file, 'r') as f:
+            file_path = client_secret_json_file
+            with open(file_path, 'r') as f:
                 secret_file = json.load(f)
             _type = find_type(secret_file)
             for key, value in secret_file[_type].items():

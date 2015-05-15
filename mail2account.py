@@ -7,14 +7,18 @@ import email
 from chardet import detect
 from email.header import decode_header
 import re
+import os
+import sys
+_PACKAGE_PATH = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(_PACKAGE_PATH)
+os.chdir(_PACKAGE_PATH)
 
 
 class SettingHandler:
-    def __init__(self, setting_file):
+    def __init__(self, settings):
         self.accounts = {}
-        self.settings = sublime.load_settings(setting_file)
+        self.settings = settings
         self.mailboxs = self.settings.get("Mailboxs")
-        self.setting_file = setting_file
 
     def list_mailbox(self):
         mailbox_list = []
@@ -66,7 +70,8 @@ class Account:
 
     def __init__(self, setting_file, identity):
         self.address_book = None
-        self.setting_container = SettingHandler(setting_file)
+        loaded_settings = sublime.load_settings(setting_file)
+        self.setting_container = SettingHandler(loaded_settings)
         self.identity = identity
         self.mailbox = self.setting_container.get_mailbox(self.identity)
         if "client_secret_file" in self.mailbox["parameters"].keys():
@@ -165,10 +170,16 @@ class GenericReceiver(Account):
                 if decoded_from[i][1] is None:
                     tem_str.append(decoded_from[i][0])
                 else:
-                    tem_str.append(decoded_from[0][0].decode(decoded_from[0][1]))
+                    try:
+                        tem_str.append(decoded_from[0][0].decode(decoded_from[0][1]))
+                    except:
+                        tem_str.append(decoded_from[0][0])
             new_tem_str = []
             for i in tem_str:
-                new_tem_str.append(str(i))
+                try:
+                    new_tem_str.append(i.decode('utf-8'))
+                except:
+                    new_tem_str.append(i)
             address = ' '.join(new_tem_str)
             if flag == "full":
                 return address
@@ -193,6 +204,8 @@ class GenericReceiver(Account):
             if part.get_content_type() == "text/plain":
                 mail_body = auto_decode(part.get_payload(decode=True))
                 msge["body"] = mail_body.replace('\r', '')
+        if "body" not in msge.keys():
+            msge["body"] = "Only HTML Version available."
         header_obj = email.message_from_string(header[0][1].decode('utf-8'))
         msge['id'] = target_email_id
         msge["header"] = {}
@@ -205,6 +218,7 @@ class GenericReceiver(Account):
             else:
                 msge['header'][key] = header_obj[key]
         msge["address"] = from_dealing(msge["header"]["from"], "full")
+        msge["mailbox"] = from_dealing(msge["header"]["to"], "full")
         for key in ("from", "cc", "bcc", "to"):
             msge["header"][key] = from_dealing(msge["header"][key], "name")
         msge["header"]["subject"] = subject_dealing(msge["header"]["subject"])
