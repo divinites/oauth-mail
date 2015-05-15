@@ -44,11 +44,11 @@ I have no intention to make it a full functional email agent with complicated ru
 
 ## Change Logs:
 
-v.0.1.1 The first commitment
-v.0.2.0 minor changes
-v.0.3.0 Commit the following changes:
--IMAP module Added: list recent mail, show mail content with user entering mail ID
-- Corrected the path problem and setting loading problem
+- v.0.1.1 The first commitment
+- v.0.2.0 minor changes
+- v.0.3.0 Commit the following changes:
+    -IMAP module Added: list recent mail, show mail content with user entering mail ID
+    - Corrected the path problem and setting loading problem
 
 
 
