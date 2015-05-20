@@ -34,7 +34,7 @@ That's it. In the first time you use the send mail, it will redirect your an aut
 
 ## Future Development:
 
-1. This project is still in its early stage, now it suppport sending mails via Outlook mails and Gmails.
+1. This project is still in its early stage, now it suppport sending and receiving mails via Outlook mails and Gmails. 
 2. Next step: 
    - Adding signature support
    - ~~Adding IMAP support, so users will be able to receive recent emails~~
