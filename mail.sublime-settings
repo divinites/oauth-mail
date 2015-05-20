@@ -2,24 +2,24 @@
     "Mailboxs": [
 
                     {
-                        "identity": "divinites@gmail.com",
+                        "identity": "XXXX@gmail.com",
 
                         "parameters": {
 
-                                        "name": "Tong Wang",
-                                        "signature": "--T.W.",
+                                        "name": "XXXX",
+                                        "signature": "--XX",
                                         "client_secret_file": "gmail.json",
                                         "default": "yes"
                                       }
                     },
 
                     {
-                        "identity": "economics@live.fr",
+                        "identity": "XXXX@outlook.com",
                         "parameters": {
 
-                                        "name": "Tong Wang",
-                                        "client_id": "000000004414CADA",
-                                        "client_secret": "ynErcLglOOixOn0h4a3EfYSeLM3PRN-w",
+                                        "name": "XXXX",
+                                        "client_id": "XXXXX",
+                                        "client_secret": "XXXXX",
                                         "default": "no"
                                      }
                     }
