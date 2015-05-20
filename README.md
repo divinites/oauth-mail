@@ -44,11 +44,11 @@ I have no intention to make it a full functional email agent with complicated ru
 
 ## Change Logs:
 
-v. 0.1.1 The first commitment
-v. 0.2.0 re-write using oauthmail API
-v. 0.3.0 IMAP fully worked
-v. 0.3.1 minor changes
-v. 0.3.5 correct some minor errors
+- v. 0.1.1 The first commitment
+- v. 0.2.0 re-write using oauthmail API
+- v. 0.3.0 IMAP fully worked
+- v. 0.3.1 minor changes
+- v. 0.3.5 correct some minor errors
 
 
 ## Thanks:
