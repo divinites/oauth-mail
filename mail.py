@@ -1,14 +1,12 @@
-import sys
 import os
-_PACKAGE_PATH = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(_PACKAGE_PATH)
-os.chdir(_PACKAGE_PATH)
-import mail2account
+from .libmail import mail2account
 import sublime_plugin
 import threading
 import sublime
 import re
 import queue
+from datetime import date
+from datetime import timedelta
 
 _LOADED_SETTINGS = None
 _SETTING_FILE = "mail.sublime-settings"
@@ -19,11 +17,13 @@ _MAIL_PREFIX_FLAG = 'text.email '
 _MESSAGE_FLAG = 'meta.message'
 
 
-def _RECIPIENTS_FLAG(cls, typ):
-    return 'meta.address.r`ecipient.{0} string'.format(typ)
+def _RECIPIENTS_FLAG(typ):
+    return 'meta.address.recipient.{0} string'.format(typ)
 
 
 _MAIL_SYNTAX_PATH = "Packages/{}/mail.tmLanguage".format(__package__)
+_LIST_SYNTAX_PATH = "Packages/{}/list.tmLanguage".format(__package__)
+_LIST_THEME_PATH = "Packages/{}/list.tmTheme".format(__package__)
 _MAIL_LIST_SYNTAX_PATH = ' '
 _SUCCESS_MESSAGE = "Message Successfully Sent."
 _FAIL_MESSAGE = "Message failed."
@@ -299,13 +299,16 @@ class ListRecentMailCommand(sublime_plugin.WindowCommand):
 
     def run(self):
         _SETTINGS = mail2account.SettingHandler(_LOADED_SETTINGS)
+        list_period = _SETTINGS.get_list_period()
+        since_date = date.today() - timedelta(days=list_period)
+        date_string = "(SINCE \""+since_date.strftime("%d-%b-%Y")+"\")"
         view = self.window.new_file()
         identity = _SETTINGS.get_default_identity()
         mailbox_queue = queue.Queue()
         list_queue = queue.Queue()
         IMAP_thread = MailBoxConnectionThread(mailbox_queue, identity)
         IMAP_thread.start()
-        list_mail = GetEmailListThread(mailbox_queue, list_queue, None)
+        list_mail = GetEmailListThread(mailbox_queue, list_queue, date_string, None)
         list_mail.start()
         print_in_view = PrintListInView(list_queue, view)
         print_in_view.start()
@@ -323,10 +326,11 @@ class MailBoxConnectionThread(threading.Thread):
 
 
 class GetEmailListThread(threading.Thread):
-    def __init__(self, in_mailbox_queue, out_list_queue, location=None):
+    def __init__(self, in_mailbox_queue, out_list_queue, date_string, location=None):
         threading.Thread.__init__(self)
         self.mailbox_queue = in_mailbox_queue
         self.list_queue = out_list_queue
+        self.date_string = date_string
         if location is None:
             self.location = 'INBOX'
         else:
@@ -334,7 +338,7 @@ class GetEmailListThread(threading.Thread):
 
     def run(self):
         mailbox = self.mailbox_queue.get()
-        mail_list = mailbox.fetch_selected_email('(SINCE "11-MAY-2015")')
+        mail_list = mailbox.fetch_selected_email(self.date_string)
         self.list_queue.put(mail_list)
         self.mailbox_queue.put(mailbox)
 
@@ -378,6 +382,8 @@ class PrintListInView(threading.Thread):
                     second_line += " " + word
             return first_line, second_line
 
+        self.view.set_syntax_file(_LIST_SYNTAX_PATH)
+        self.view.settings().set('color_scheme', _LIST_THEME_PATH)
         mail_list = self.list_queue.get()
         snippet = ''
         snippet = "Mailbox: "+mail_list[0]["mailbox"]+'\n\n'
@@ -386,16 +392,16 @@ class PrintListInView(threading.Thread):
                                                                 "Time & Date")
         for msg in reversed(mail_list):
             mail_id = msg['id']
-            mail_subject = msg['header']["subject"]
-            mail_from = msg['header']["from"]
-            mail_date = msg['header']["date"]
+            mail_subject = msg["subject"]
+            mail_from = msg["from"]
+            mail_date = msg["date"]
             if len(mail_subject) > 60:
                 mail_subject = mail_subject[:57] + '...'
             first_line, second_line = split_line(mail_subject)
             snippet += "{:<8}\t{:<30}\t\t{:<40}\t\t{:^15}\n".format(
-                mail_id, mail_from[:30], first_line, mail_date[:10])
+                mail_id, mail_from[:30], first_line, mail_date[:11])
             snippet += "{:<8}\t{:<30}\t\t{:<40}\t\t{:^15}\n".format(
-                '', '', second_line, mail_date[10:])
+                '', '', second_line, mail_date[11:])
         snippet += "\n"
         self.view.run_command("insert_snippet", {"contents": snippet})
 
@@ -410,10 +416,10 @@ class PrintMailInView(threading.Thread):
         msg = self.mail_queue.get()
         snippet = ""
         snippet += "From   : {}\n".format(msg['address'])
-        snippet += "To     : {}\n".format(msg['header']["to"])
-        snippet += "Cc     : {}\n".format(msg['header']["cc"])
-        snippet += "Bcc    : {}\n".format(msg['header']["bcc"])
-        snippet += "Subject: {}\n".format(msg['header']["subject"])
+        snippet += "To     : {}\n".format(msg["to"])
+        snippet += "Cc     : {}\n".format(msg["cc"])
+        snippet += "Bcc    : {}\n".format(msg["bcc"])
+        snippet += "Subject: {}\n".format(msg["subject"])
         snippet += "\n"
         snippet += "{}\n".format(msg["body"])
         self.view.run_command("insert_snippet", {"contents": snippet})

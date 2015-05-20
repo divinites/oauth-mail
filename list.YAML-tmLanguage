@@ -1,0 +1,37 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+---
+name: MailList
+scopeName: text.list
+fileTypes: []
+uuid: 0df86606-d7a6-4ed7-9a74-8d0c98c793eb
+
+patterns:
+  - name: mailbox
+    match: (?<=Mailbox:\s<)(.+)(?=>)
+
+patterns:
+  - name: title
+    match: (?i)\s+(ID)\b
+
+patterns:
+  - name: from
+    match: .+(From)\s{4,}.+
+
+patterns:
+  - name: subject
+    match: .+(Subject)\s{4,}.+
+
+patterns:
+  - name: time
+    match: .+(Time\s&\sDate)\s+
+
+patterns:
+  - name: content
+    match: ^(.{8})\s{4}(.{30})\s{8}(.{40})\s{8}(.{15})
+    Captures:
+      '1': {name: id}
+      '2': {name: sender}
+      '3': {name: subject}
+      '4': {name: date}
+
+

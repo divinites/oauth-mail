@@ -37,19 +37,14 @@ That's it. In the first time you use the send mail, it will redirect your an aut
 1. This project is still in its early stage, now it suppport sending mails via Outlook mails and Gmails.
 2. Next step: 
    - Adding signature support
-   - ~~Adding IMAP support, so users will be able to receive recent emails~~
+   - Adding IMAP support, so users will be able to receive recent emails
    - Adding reply and forwarding command
 
 I have no intention to make it a full functional email agent with complicated rules, since we already have so many execellent programs. I will keep it light-weight, only necessary functions will be added.
 
 ## Change Logs:
 
-- v.0.1.1 The first commitment
-- v.0.2.0 minor changes
-- v.0.3.0 Commit the following changes:
-    -IMAP module Added: list recent mail, show mail content with user entering mail ID
-    - Corrected the path problem and setting loading problem
-
+v.0.1.1 The first commitment
 
 
 ## Thanks:

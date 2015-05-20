@@ -1,0 +1,103 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+name: E-Mail
+scopeName: text.email
+fileTypes: [eml, email]
+uuid: ecc7917d-555b-4005-a65a-40f92aafe508
+
+patterns:
+- include: '#header-field'
+
+repository:
+  email-addresslist:
+    contentName: string.unquoted.address.email
+    begin: ^(?i)(From|To|Cc|Bcc)\s*(:)\s*
+    beginCaptures:
+      '1': {name: keyword.email}
+      '2': {name: keyword.operator.email}
+    end: ^(?!\s)
+    applyEndPatternLast: 1
+
+  email-attachment:
+    contentName: string.unquoted.attachment.email
+    begin: ^\s*([-\*\+])\s*
+    beginCaptures:
+      '1': {name: keyword.operator.email}
+    end: $
+    applyEndPatternLast: 1
+
+  email-message:
+    patterns:
+    - contentName: meta.embedded.restructuredtext
+      begin: ^(?i)(\#!re?st)
+      beginCaptures:
+        '1': {name: keyword.operator.type.email}
+      end: (?=^--\s*\n|^\n\n)
+      patterns:
+      - include: text.restructuredtext
+    - contentName: meta.embedded.restructuredtext
+      begin: ^(?i)(\#!markdown)
+      beginCaptures:
+        '1': {name: keyword.operator.type.email}
+      end: (?=^--\s*\n|^\n\n)
+      patterns:
+      - include: text.html.markdown
+    - contentName: support.other.signature
+      begin: ^(--)$
+      beginCaptures:
+        '1': {name: keyword.operator.email}
+      end: ^\n\n
+      applyEndPatternLast: 1
+
+  header-field:
+    patterns:
+    - name: meta.address.sender.email
+      begin: ^(?i)(?=From\s*:)
+      end: ^(?![\t\x{00000020}])
+      patterns:
+      - include: '#email-addresslist'
+    - name: meta.address.recipient.to.email
+      begin: ^(?i)(?=To\s*:)
+      end: ^(?![\t\x{00000020}])
+      patterns:
+      - include: '#email-addresslist'
+    - name: meta.address.recipient.cc.email
+      begin: ^(?i)(?=Cc\s*:)
+      end: ^(?![\t\x{00000020}])
+      patterns:
+      - include: '#email-addresslist'
+    - name: meta.address.recipient.bcc.email
+      begin: ^(?i)(?=Bcc\s*:)
+      end: ^(?![\t\x{00000020}])
+      patterns:
+      - include: '#email-addresslist'
+    - name: meta.attachment.email
+      begin: ^(?i)(attach(?:ments?)?)\s*(:)\s*
+      beginCaptures:
+        '1': {name: keyword.email}
+        '2': {name: keyword.operator.email}
+      end: ^(?![\t\x{00000020}])
+      patterns:
+      - include: '#email-attachment'
+    - name: meta.subject.email
+      begin: ^(?i)(subject)\s*(:)\s*
+      beginCaptures:
+        '1': {name: keyword.email}
+        '2': {name: keyword.operator.email}
+      end: ^(?![\t\x{00000020}])
+      patterns:
+      - name: string.unquoted.subject.email
+        begin: (?=\S)
+        end: ^(?![\t\x{00000020}])
+        applyEndPatternLast: 1
+    - contentName: string.unquoted.header.email
+      begin: ^(Date)\s*(:)
+      beginCaptures:
+        '1': {name: keyword.email}
+        '2': {name: keyword.operator.email}
+      end: ^(?![\t\x{00000020}])
+      applyEndPatternLast: 1
+    - name: meta.message.email
+      begin: ^\s*$
+      end: ^\n\n
+      patterns:
+      - include: '#email-message'

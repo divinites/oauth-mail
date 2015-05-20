@@ -25,9 +25,9 @@
         "command": "mail_add_to_addressbook"
     },
     {
-        "caption": "Oauth Mail: Show Last E-Mail", 
+        "caption": "Oauth Mail: Show E-Mail", 
         "args": {}, 
-        "command": "show_last_mail"
+        "command": "show_mail"
     },
     {
         "caption": "Oauth Mail: Show E-Mail List", 

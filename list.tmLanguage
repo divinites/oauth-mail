@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array/>
+	<key>name</key>
+	<string>MailList</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>Captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>id</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>sender</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>subject</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>date</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(.{8})\s{4}(.{30})\s{8}(.{40})\s{8}(.{15})</string>
+			<key>name</key>
+			<string>content</string>
+		</dict>
+	</array>
+	<key>scopeName</key>
+	<string>text.list</string>
+	<key>uuid</key>
+	<string>0df86606-d7a6-4ed7-9a74-8d0c98c793eb</string>
+</dict>
+</plist>
