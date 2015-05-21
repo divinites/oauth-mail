@@ -30,7 +30,7 @@
 							},
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/Oauth Mail/user.sublime-settings"},
+								"args": {"file": "${packages}/Oauth Mail/User.sublime-settings"},
 								"caption": "Mail Settings - User"
 							}
 						]
