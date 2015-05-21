@@ -26,7 +26,12 @@
 							{
 								"command": "open_file",
 								"args": {"file": "${packages}/Oauth Mail/Mail.sublime-settings"},
-								"caption": "Mail Settings"
+								"caption": "Mail Settings - Default"
+							},
+							{
+								"command": "open_file",
+								"args": {"file": "${packages}/Oauth Mail/user.sublime-settings"},
+								"caption": "Mail Settings - User"
 							}
 						]
 					}

@@ -9,7 +9,7 @@ from datetime import date
 from datetime import timedelta
 
 _LOADED_SETTINGS = None
-_SETTING_FILE = "mail.sublime-settings"
+_SETTING_FILE = "user.sublime-settings"
 _SENDER_FLAG = 'meta.address.sender string'
 _ATTACHMENT_FLAG = 'meta.attachment string'
 _SUBJECT_FLAG = 'meta.subject string'
@@ -50,7 +50,7 @@ def plugin_loaded():
 
 def check_mailbox_type(identity):
     checker_dict = {
-        "outlook": "\S+@[live|hotmail].+",
+        "outlook": "\S+@[live|hotmail|outlook].+",
         "gmail": "\S+@[gmail|googlemail].+"
     }
     for name, checker in checker_dict.items():

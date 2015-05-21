@@ -45,6 +45,8 @@ class OauthMailSession(OAuth2Session):
                  token_uri=None,
                  cache_flag=True, **kwargs):
         _client_id = None
+        if not os.path.exists(_CACHE_PATH):
+            os.makedirs(_CACHE_PATH)
         if client_secret_json_file:
             file_path = os.path.join(_PACKAGE_PATH, client_secret_json_file)
             with open(file_path, 'r') as f:
