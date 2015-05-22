@@ -9,7 +9,7 @@ from datetime import date
 from datetime import timedelta
 
 _LOADED_SETTINGS = None
-_SETTING_FILE = "user.sublime-settings"
+_SETTING_FILE = "OauthMail.sublime-settings"
 _SENDER_FLAG = 'meta.address.sender string'
 _ATTACHMENT_FLAG = 'meta.attachment string'
 _SUBJECT_FLAG = 'meta.subject string'

@@ -1,36 +1,36 @@
 [
 	{
-		"caption": "Tools",
-		"mnemonic": "T",
-		"id": "tools",
+		"caption": "Preferences",
+		"mnemonic": "P",
+		"id": "preferences",
 		"children": [
 			{
-				"caption": "Packages",
+				"caption": "Package Settings",
 				"mnemonic": "P",
-				"id": "packages",
+				"id": "package-settings",
 				"children": [
 					{
 						"caption": "Oauth Mail",
 						"children": [
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/Oauth Mail/Default.sublime-keymap"},
+								"args": {"file": "${packages}/Oauth Mail/OauthMail.sublime-keymap"},
 								"caption": "Keymap – Default"
 							},
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/Oauth Mail/User.sublime-keymap"},
+								"args": {"file": "${packages}/User/OauthMail.sublime-keymap"},
 								"caption": "keymap – User"
 							},
 							{ "caption": "-" },
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/Oauth Mail/Mail.sublime-settings"},
+								"args": {"file": "${packages}/Oauth Mail/OauthMail.sublime-settings"},
 								"caption": "Mail Settings - Default"
 							},
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/Oauth Mail/User.sublime-settings"},
+								"args": {"file": "${packages}/User/OauthMail.sublime-settings"},
 								"caption": "Mail Settings - User"
 							}
 						]
