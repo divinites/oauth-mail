@@ -13,8 +13,8 @@ from os.path import dirname
 from os.path import realpath
 
 
-_PACKAGE_PATH = dirname(dirname(realpath(__file__)))
-_CACHE_PATH = os.path.join(_PACKAGE_PATH, "cache")
+_PACKAGE_PATH = dirname(dirname(dirname(realpath(__file__))))
+_CACHE_PATH = os.path.join(_PACKAGE_PATH, "Packages/User/Oauthmail.cache")
 
 
 def cache_path(file_name):
