@@ -8,7 +8,8 @@
 
                                         "name": "XXXX",
                                         "signature": "--XX",
-                                        "client_secret_file": "gmail.json",
+                                        "client_id": "XXXXX",
+                                        "client_secret": "XXXXX",
                                         "default": "yes"
                                       }
                     },

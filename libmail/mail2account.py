@@ -164,7 +164,7 @@ class GenericReceiver(Account):
             return subject
 
         def date_dealing(raw_date_str):
-            return raw_date_str[6:26]
+            return raw_date_str[6:27]
 
         def from_dealing(from_str, flag="name"):
             real_from = ''
@@ -203,6 +203,7 @@ class GenericReceiver(Account):
         else:
             target_email_id = email_id
         msge = {}
+        t, structure = self.imap_conn.fetch(target_email_id, "BODYSTRUCTURE")
         t, raw_msg = self.imap_conn.fetch(target_email_id, 'BODY[]')
         t, header = self.imap_conn.fetch(target_email_id, 'BODY.PEEK[HEADER]')
         msg = email.message_from_string(raw_msg[0][1].decode('utf-8', 'ignore'))
