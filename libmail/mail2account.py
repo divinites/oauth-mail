@@ -26,6 +26,7 @@ class SettingHandler:
 
     def add_mailbox(self, identity, name,
                     default='no',
+                    authentication="oauth",
                     smtp_server=None,
                     smtp_port=25,
                     imap_port=25,
@@ -33,6 +34,7 @@ class SettingHandler:
         mailbox = {}
         mailbox["identity"] = identity
         mailbox["parameters"]["name"] = name
+        mailbox["parameters"]["authentication"] = authentication
         mailbox["parameters"]["smtp_server"] = smtp_server
         mailbox["parameters"]["smtp_port"] = smtp_port
         mailbox["parameters"]["imap_server"] = imap_server
@@ -78,29 +80,39 @@ class Account:
         self.setting_container = SettingHandler(loaded_settings)
         self.identity = identity
         self.mailbox = self.setting_container.get_mailbox(self.identity)
-        if "client_secret_file" in self.mailbox["parameters"].keys():
-            client_secret_json_file = self.mailbox["parameters"]["client_secret_file"]
-            client_id = None
-            client_secret = None
-        else:
-            client_secret_json_file = None
-            client_id = self.mailbox["parameters"]["client_id"]
-            client_secret = self.mailbox["parameters"]["client_secret"]
-        self.account = oauth2mail.OauthMailSession(
-            client_id=client_id,
-            client_secret=client_secret,
-            scope=self.MAIL_SCOPE,
-            client_secret_json_file=client_secret_json_file,
-            auth_uri=self.AUTH_URI,
-            token_uri=self.TOKEN_URI,
-            redirect_uri=self.REDIRECT_URI)
-        if self.account._token_is_cached():
-            self.account._load_cached_token()
-            if self.account._token_expired():
-                self.account._refresh_token()
-        else:
-            auth_code = self.account._acquire_code()
-            self.account._get_token(auth_code)
+        if self.mailbox["authentication"] == "oauth":
+
+            if "client_secret_file" in self.mailbox["parameters"].keys():
+                client_secret_json_file = self.mailbox["parameters"]["client_secret_file"]
+                client_id = None
+                client_secret = None
+            else:
+                client_secret_json_file = None
+                client_id = self.mailbox["parameters"]["client_id"]
+                client_secret = self.mailbox["parameters"]["client_secret"]
+            self.account = oauth2mail.OauthMailSession(
+                client_id=client_id,
+                client_secret=client_secret,
+                scope=self.MAIL_SCOPE,
+                client_secret_json_file=client_secret_json_file,
+                auth_uri=self.AUTH_URI,
+                token_uri=self.TOKEN_URI,
+                redirect_uri=self.REDIRECT_URI)
+            if self.account._token_is_cached():
+                self.account._load_cached_token()
+                if self.account._token_expired():
+                    self.account._refresh_token()
+            else:
+                auth_code = self.account._acquire_code()
+                self.account._get_token(auth_code)
+
+        elif self.mailbox["authentication"] == "password":
+            if self.account._password_is_cached():
+                self.account._load_password()
+            else:
+                
+
+
 
     def set(self, parameter, value):
         self.mailbox["parameters"][parameter] = value

@@ -3,6 +3,7 @@
 
                     {
                         "identity": "XXXX@gmail.com",
+                        "authentication": "oauth",
 
                         "parameters": {
 
@@ -16,6 +17,7 @@
 
                     {
                         "identity": "XXXX@outlook.com",
+                        "authentication": "password",
                         "parameters": {
 
                                         "name": "XXXX",
