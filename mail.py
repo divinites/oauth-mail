@@ -1,5 +1,7 @@
 import os
-from .libmail import mail2account
+from .libmail import mailconf
+from .libmail import settinghandler
+# from .libmail import pass2mail
 import sublime_plugin
 import threading
 import sublime
@@ -7,6 +9,9 @@ import re
 import queue
 from datetime import date
 from datetime import timedelta
+from time import sleep
+
+# Set YAML flags and global variable _LOADED_SETTINGS
 
 _LOADED_SETTINGS = None
 _SETTING_FILE = "OauthMail.sublime-settings"
@@ -18,6 +23,10 @@ _MESSAGE_FLAG = 'meta.message'
 
 
 def _RECIPIENTS_FLAG(typ):
+    """
+    Since there are at least three types of recipients flags :CC BCC and To
+    so, define a function here instead of three constants.
+    """
     return 'meta.address.recipient.{0} string'.format(typ)
 
 
@@ -28,18 +37,9 @@ _MAIL_LIST_SYNTAX_PATH = ' '
 _SUCCESS_MESSAGE = "Message Successfully Sent."
 _FAIL_MESSAGE = "Message failed."
 _MAIL_CLASS_DICT = {
-    "gmail": {
-        "smtp": mail2account.GoogleSender,
-        "imap": mail2account.GoogleReceiver
-    },
-    "outlook": {
-        "smtp": mail2account.OutlookSender,
-        "imap": mail2account.OutlookReceiver
-    },
-    "generic": {
-        "smtp": mail2account.GenericSender,
-        "imap": mail2account.GenericReceiver
-    }
+    "gmail": mailconf.google_account,
+    "outlook": mailconf.outlook_account,
+    "generic": mailconf.pass_account
 }
 
 
@@ -49,9 +49,12 @@ def plugin_loaded():
 
 
 def check_mailbox_type(identity):
+    """
+    Check mailbox types.
+    """
     checker_dict = {
-        "outlook": "\S+@[live|hotmail|outlook].+",
-        "gmail": "\S+@[gmail|googlemail].+"
+        "outlook": "^[a-z0-9](\.?[a-z0-9]){5,}@(live|outlook|hotmail)\..+",
+        "gmail": "^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com"
     }
     for name, checker in checker_dict.items():
         prog = re.compile(checker)
@@ -74,7 +77,7 @@ class MailWriteCommand(sublime_plugin.WindowCommand):
             Body="",
             Signature=None,
             Attachments=[]):
-        _SETTINGS = mail2account.SettingHandler(_LOADED_SETTINGS)
+        _SETTINGS = settinghandler.get_settings()
         view = self.window.new_file()
         view.set_syntax_file(_MAIL_SYNTAX_PATH)
         snippet = ""
@@ -105,10 +108,11 @@ class SendMailThread(threading.Thread):
 
         mail_type = check_mailbox_type(self.identity)
 
-        account = _MAIL_CLASS_DICT[mail_type]["smtp"](_SETTING_FILE,
-                                                      self.identity)
+        account = _MAIL_CLASS_DICT[mail_type](self.identity)
+        account.start_smtp(account.smtp_server, account.smtp_port, account.tls_flag)
+        sleep(10)
         if account.smtp_authenticate():
-            account.send_mail(self.recipients, self.msg)
+            account.send_mail(self.identity, self.recipients, self.msg)
             sublime.status_message(_SUCCESS_MESSAGE)
         else:
             sublime.status_message(_FAIL_MESSAGE)
@@ -274,7 +278,7 @@ class ShowMailCommand(sublime_plugin.WindowCommand):
         return True
 
     def on_done(self, mail_id):
-        _SETTINGS = mail2account.SettingHandler(_LOADED_SETTINGS)
+        _SETTINGS = settinghandler.get_settings()
         view = self.window.new_file()
         view.set_syntax_file(_MAIL_SYNTAX_PATH)
         identity = _SETTINGS.get_default_identity()
@@ -298,7 +302,7 @@ class ListRecentMailCommand(sublime_plugin.WindowCommand):
         return True
 
     def run(self):
-        _SETTINGS = mail2account.SettingHandler(_LOADED_SETTINGS)
+        _SETTINGS = settinghandler.get_settings()
         list_period = _SETTINGS.get_list_period()
         since_date = date.today() - timedelta(days=list_period)
         date_string = "(SINCE \""+since_date.strftime("%d-%b-%Y")+"\")"
@@ -318,11 +322,14 @@ class MailBoxConnectionThread(threading.Thread):
     def __init__(self, out_mailbox_queue, identity):
         threading.Thread.__init__(self)
         self.mailbox_queue = out_mailbox_queue
-        self.mailbox = _MAIL_CLASS_DICT[check_mailbox_type(identity)]["imap"](
-            _SETTING_FILE, identity)
+        self.mailbox = _MAIL_CLASS_DICT[check_mailbox_type(identity)](identity)
 
     def run(self):
-        self.mailbox_queue.put(self.mailbox)
+        self.mailbox.start_imap(self.mailbox.imap_server,
+                                self.mailbox.imap_port,
+                                self.mailbox.tls_flag)
+        if self.mailbox.imap_authenticate():
+            self.mailbox_queue.put(self.mailbox)
 
 
 class GetEmailListThread(threading.Thread):
