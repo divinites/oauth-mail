@@ -4,9 +4,10 @@ I developed the oauth-mail plug-in because I sometimes want to send directly wha
 
 ## Set-up steps:
 
-Currently, oauth-mail supports Microsoft outlook.com (including hotmail, livemail, etc.) and gmail. 
+Currently, oauth-mail supports Microsoft outlook.com (including hotmail, livemail, etc.) and gmail **and most of standard IMAP/SMTP mail servers**.
 
-Before using Oauth Mail, you need proceed with some simple steps to set it up.
+OauthMail supports two authentication methods: oauth authentication and password authentication.
+
 
 The setting template is
 
@@ -18,7 +19,11 @@ Preference -> Package Settings -> Oauth Mail -> Mail settings - User
 
 to configure your own mail settings.
 
-### Gmail Settings:
+### For Oauth Authentication (No password needed, much safer)
+
+
+
+#### Gmail Settings:
 
 Gmail setup is quite simple, 
 
@@ -38,6 +43,15 @@ Google also provide a downloadable json-format configuration file (including cli
 3. Microsoft's policy about the redirect URI is quite tricky, it must be in the form http://www.xxx.com:[port], so in the current version, I hard code http://www.mylocalhost.com:10111 as the default redirect url, please fill in the API settings as well. in the future version,  I will add an option entry so that users can choose there preferred names in *mail.sublime-settings*.
 
 4. modify your host file: for osx users, it is /etc/host, add a new line *127.0.0.1  www.mylocalhost.com* at the end.
+
+
+### Password Method 
+
+If oauth method does not work for you, or you want to use email other than gmail and microsoft mail, you can use password Method.
+
+First, add an entry *"authentication": "password"* in OauthMail.sublime-settings, and do not forget entering the correct imap/smtp server.
+
+The first time you using this email, an input panel will show up and sequentially ask you to input your username and password. Input it in 10 second, and that's all. Username and password will be cached so you do not need to enter it again. (I will add an option to let you decide whether username and password should be cached or not)
 
 
 ##  Commands:
@@ -70,6 +84,7 @@ I have no intention to make it a full functional email agent with complicated ru
 - v. 0.3.5 correct some minor errors
 - v. 0.4.0 add YAML support (still working on it)
 - v. 0.4.1 accepted by package control channel
+- v. 0.6.6 reconstruct the code and support username/password authentication
 
 
 ## Thanks:

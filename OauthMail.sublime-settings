@@ -25,6 +25,18 @@
                                         "client_secret": "XXXXX",
                                         "default": "no"
                                      }
+                    },
+                    {
+                        "identity": "xxxx@xxxx.com",
+                        "authentication": "password",
+                        "parameters": {
+                                        "imap_server": "xxxxxxx",
+                                        "imap_port": 993,
+                                        "smtp_server": "xxxxxxx",
+                                        "smtp_port": 587,
+                                        "tls": "yes",
+                                        "default": "no"
+                                      }
                     }
 
                 ],

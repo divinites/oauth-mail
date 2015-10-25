@@ -1,0 +1,17 @@
+Thanks for installing Oauth-mail, a light-weighted email agent for sublime txt.
+
+Currently, oauth-mail supports Microsoft outlook.com (including hotmail, livemail, etc.) and gmail **and most of standard IMAP/SMTP mail servers**.
+
+OauthMail supports two authentication methods: oauth authentication and password authentication.
+
+The setting template is
+
+Preference -> Package Settings -> Oauth Mail -> Mail settings - Default
+
+ you should copy it and paste to
+
+Preference -> Package Settings -> Oauth Mail -> Mail settings - User
+
+to configure your own mail settings.
+
+Please have a look at README.md for more details.
