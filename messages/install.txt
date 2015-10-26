@@ -15,3 +15,48 @@ Preference -> Package Settings -> Oauth Mail -> Mail settings - User
 to configure your own mail settings.
 
 Please have a look at README.md for more details.
+
+### For Oauth Authentication (No password needed, much safer)
+
+
+
+#### Gmail Settings:
+
+Gmail setup is quite simple, 
+
+1. Go to [Google dev centre](https://console.developers.google.com/project), create a project. Here is a nice tutorial if you are not familiar with that [How to obtain Google Client ID and Secret](https://www.youtube.com/watch?v=o425vQXpigw).
+
+Now, you have a client ID and Client Secret, copy and paste them into the Mail settings - User and it simply works.
+
+Google also provide a downloadable json-format configuration file (including client_id, client_secret, auth_uri and etc.). If you prefer to use this, you can download it and copy the full path, create an entry "client_secret_file" just before "client_id", and paste the path of your downloaded configuration file. It should also do the job.
+
+
+####  Microsoft Mail settings:
+
+1. go to [microsoft dev centre](https://account.live.com/developers/applications/index), create an application.
+
+2. In the API settings, you will find your client_id and client_secret, fill in the scope with ** wl.imap**, choose no for mobile client.
+
+3. Microsoft's policy about the redirect URI is quite tricky, it must be in the form http://www.xxx.com:[port], so in the current version, I hard code http://www.mylocalhost.com:10111 as the default redirect url, please fill in the API settings as well. in the future version,  I will add an option entry so that users can choose there preferred names in *mail.sublime-settings*.
+
+4. modify your host file: for osx users, it is /etc/host, add a new line *127.0.0.1  www.mylocalhost.com* at the end.
+
+
+### Password Method 
+
+If oauth method does not work for you, or you want to use email other than gmail and microsoft mail, you can use password Method.
+
+First, add an entry *"authentication": "password"* in OauthMail.sublime-settings, and do not forget entering the correct imap/smtp server.
+
+The first time you using this email, an input panel will show up and sequentially ask you to input your username and password. Input it in 10 second, and that's all. Username and password will be cached so you do not need to enter it again. (I will add an option to let you decide whether username and password should be cached or not)
+
+
+##  Commands:
+
+- **write_mail**: do exactly as the command name describes, this command will open a new view
+- **send_mail**:  do exactly as the command name, describes, this command will send the mail you write
+- **send_as_mail**: this command will add email header on top of all the content in current view
+- **show_mail_list**: this command will show the default email list, you can set it in user setting files.
+- **show_mail**: it would be better to use it after show mail list, since this command with show an input panel, you can enter the mail ID (listed by **show_mail_list** command) and a new view will open and show your mail content.
+
+That's it. In the first time you use this plug-in, it will redirect your an authorization page, where you can click "yes" for authorization, after you see the page "the authentication flow has completed", you can close that page and return to Sublime Text. In the next time and what so ever, you can instantly send emails without any additional step, since the program will automatically deal with everything and refresh the access_token when necessary. 

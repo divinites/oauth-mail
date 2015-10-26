@@ -13,7 +13,7 @@ from os.path import dirname
 from os.path import realpath
 
 
-_PACKAGE_PATH = dirname(dirname(dirname(dirname(realpath(__file__)))))
+_PACKAGE_PATH = dirname(dirname(dirname(realpath(__file__))))
 _CACHE_PATH = os.path.join(_PACKAGE_PATH, "Packages/User/Oauthmail.cache")
 
 
@@ -101,7 +101,7 @@ class OauthMailSession(OAuth2Session):
         else:
             return
 
-    def _save_in_cache(self, root):
+    def _save_in_cache(self):
         if self.token:
             root = {}
             root["access_token"] = self.token["access_token"]
@@ -160,7 +160,7 @@ class OauthMailSession(OAuth2Session):
         self.token["refresh_token"] = root["refresh_token"]
         self.expires_in = root["expires_in"]
         if save is True:
-            self._save_in_cache(root)
+            self._save_in_cache()
 
     def _refresh_token(self, save=True):
         params = {}
@@ -179,7 +179,7 @@ class OauthMailSession(OAuth2Session):
         root["refresh_token"] = self.token["refresh_token"]
         self.acquired_time = root["acquired_time"]
         if save is True:
-            self._save_in_cache(root)
+            self._save_in_cache()
 
     def gen_auth_string(self, identity, base64_encode=False):
         if self.acquired_time and self.expires_in:
