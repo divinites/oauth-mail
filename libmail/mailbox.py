@@ -21,12 +21,16 @@ class Sender:
     def is_smtp_auth(self, auth_message):
         if auth_message[0] == 235:
             return True
+        print(auth_message)
         return False
 
     def start_smtp(self, smtp_server, smtp_port, tls_flag):
-        self.smtp_conn = smtplib.SMTP(smtp_server, smtp_port)
-        if tls_flag:
-            self.smtp_conn.starttls()
+        try:
+            self.smtp_conn = smtplib.SMTP_SSL(smtp_server, smtp_port)
+        except:
+            self.smtp_conn = smtplib.SMTP(smtp_server, smtp_port)
+            if tls_flag:
+                self.smtp_conn.starttls()
         self.smtp_conn.ehlo()
 
 
