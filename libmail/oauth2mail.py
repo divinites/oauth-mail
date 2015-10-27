@@ -133,17 +133,16 @@ class OauthMailSession(OAuth2Session):
 
         host_params = get_host_parameters(self.redirect_uri)
         httpd = None
-        httpd = RedirectServer(host_params, RedirectHandler)
-        # while not httpd:
-        #     try:
-        #         httpd = RedirectServer(host_params, RedirectHandler)
-        #         print("OauthMail >>> HTTP redirect server created.")
-        #     except:
-        #         host_params = list(host_params)
-        #         host_params[1] += 10
-        #         host_params = tuple(host_params)
-        # self.redirect_uri = "http://" + host_params[0] + ":" + str(
-        #     host_params[1])
+        while not httpd:
+            try:
+                httpd = RedirectServer(host_params, RedirectHandler)
+                print("OauthMail >>> HTTP redirect server created.")
+            except:
+                host_params = list(host_params)
+                host_params[1] += 10
+                host_params = tuple(host_params)
+        self.redirect_uri = "http://" + host_params[0] + ":" + str(
+            host_params[1])
         auth_url = self._generate_auth_url(**kwargs)[0]
         webbrowser.open(auth_url, new=1, autoraise=True)
         httpd.handle_request()
