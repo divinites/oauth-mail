@@ -60,6 +60,7 @@ class OauthMailSession(OAuth2Session):
                     self.auth_uri = value
                 if key == "token_uri":
                     self.token_uri = value
+            print("OauthMail >>> Finish reading secret file.")
         else:
             _client_id = client_id
             self.client_secret = client_secret
@@ -73,6 +74,7 @@ class OauthMailSession(OAuth2Session):
         self.expires_in = None
         self.cache_file = None
         self.cache_flag = cache_flag
+        print("OauthMail >>> Oauth Session initialized.")
 
     def _token_is_cached(self):
         target = b64encode((self.client_id).encode('utf-8')).decode("utf-8")
@@ -131,15 +133,17 @@ class OauthMailSession(OAuth2Session):
 
         host_params = get_host_parameters(self.redirect_uri)
         httpd = None
-        while not httpd:
-            try:
-                httpd = RedirectServer(host_params, RedirectHandler)
-            except:
-                host_params = list(host_params)
-                host_params[1] += 1
-                host_params = tuple(host_params)
-        self.redirect_uri = "http://" + host_params[0] + ":" + str(
-            host_params[1])
+        httpd = RedirectServer(host_params, RedirectHandler)
+        # while not httpd:
+        #     try:
+        #         httpd = RedirectServer(host_params, RedirectHandler)
+        #         print("OauthMail >>> HTTP redirect server created.")
+        #     except:
+        #         host_params = list(host_params)
+        #         host_params[1] += 10
+        #         host_params = tuple(host_params)
+        # self.redirect_uri = "http://" + host_params[0] + ":" + str(
+        #     host_params[1])
         auth_url = self._generate_auth_url(**kwargs)[0]
         webbrowser.open(auth_url, new=1, autoraise=True)
         httpd.handle_request()
