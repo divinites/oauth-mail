@@ -45,7 +45,7 @@
 			<key>name</key>
 			<string>subject</string>
 			<key>scope</key>
-			<string>text.list subject</string>
+			<string>text.mail.list subject</string>
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
@@ -54,9 +54,9 @@
 		</dict>
 		<dict>
 			<key>name</key>
-			<string>id</string>
+			<string>title</string>
 			<key>scope</key>
-			<string>text.list mailbox</string>
+			<string>text.mail.list title</string>
 			<key>settings</key>
 			<dict>
 				<key>foreground</key>
@@ -65,9 +65,9 @@
 		</dict>
 		<dict>
 			<key>name</key>
-			<string>date</string>
+			<string>time</string>
 			<key>scope</key>
-			<string>text.list content date</string>
+			<string>text.mail.list time</string>
 			<key>settings</key>
 			<dict>
 				<key>fontStyle</key>
@@ -78,9 +78,9 @@
 		</dict>
 		<dict>
 			<key>name</key>
-			<string>sender</string>
+			<string>from</string>
 			<key>scope</key>
-			<string>text.list content sender</string>
+			<string>text.mail.list from</string>
 			<key>settings</key>
 			<dict>
 				<key>fontStyle</key>

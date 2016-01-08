@@ -4,7 +4,70 @@ import smtplib
 import imaplib
 from .chardet import detect
 from email.header import decode_header
+from email.parser import HeaderParser
 import email
+
+
+def auto_decode(str_body):
+    if str_body:
+        try:
+            detected_result = detect(str_body)
+            codec = detected_result['encoding']
+            return str_body.decode(codec)
+        except LookupError:
+            return "Unsupported Codec"
+    else:
+        return ' '
+
+
+def subject_dealing(raw_subject):
+    subject = ''
+    decoded_subject = decode_header(raw_subject)
+    if decoded_subject[0][1] is not None:
+        subject = decoded_subject[0][0].decode(decoded_subject[0][1])
+    else:
+        subject = decoded_subject[0][0]
+    subject = subject.replace('\r', '')
+    subject = subject.replace('\n', '')
+    return subject
+
+
+def date_dealing(raw_date_str):
+    return raw_date_str[6:27]
+
+
+def from_dealing(from_str, flag="name"):
+    real_from = ''
+    decoded_from = decode_header(from_str)
+    tem_str = []
+    for i in range(len(decoded_from)):
+        if decoded_from[i][1] is None:
+            tem_str.append(decoded_from[i][0])
+        else:
+            try:
+                tem_str.append(decoded_from[0][0].decode(decoded_from[
+                    0][1]))
+            except:
+                tem_str.append(decoded_from[0][0])
+    new_tem_str = []
+    for i in tem_str:
+        try:
+            new_tem_str.append(i.decode('utf-8'))
+        except:
+            new_tem_str.append(i)
+    try:
+        address = ' '.join(new_tem_str)
+    except:
+        pass
+    if flag == "full":
+        return address
+    else:
+        try:
+            m = re.search(r'^.*(?=(<))', address)
+            real_from = m.group()
+            return real_from
+        except:
+            return address
 
 
 class Sender:
@@ -62,62 +125,16 @@ class Receiver:
         print(auth_message)
         return False
 
+    def fetch_header(self, email_id, location='INBOX'):
+        status, header = self.imap_conn.select(location)
+        header = None
+        t, header = self.imap_conn.fetch(email_id, '(BODY[HEADER])')
+        header_data = header[0][1].decode('utf-8', 'ignore')
+        parser = HeaderParser()
+        header = parser.parsestr(header_data)
+        return header
+
     def fetch_email(self, email_id=None, location='INBOX'):
-
-        def auto_decode(str_body):
-            if str_body:
-                try:
-                    detected_result = detect(str_body)
-                    codec = detected_result['encoding']
-                    return str_body.decode(codec)
-                except LookupError:
-                    return "Unsupported Codec"
-            else:
-                return ' '
-
-        def subject_dealing(raw_subject):
-            subject = ''
-            decoded_subject = decode_header(raw_subject)
-            if decoded_subject[0][1] is not None:
-                subject = decoded_subject[0][0].decode(decoded_subject[0][1])
-            else:
-                subject = decoded_subject[0][0]
-            subject = subject.replace('\r', '')
-            subject = subject.replace('\n', '')
-            return subject
-
-        def date_dealing(raw_date_str):
-            return raw_date_str[6:27]
-
-        def from_dealing(from_str, flag="name"):
-            real_from = ''
-            decoded_from = decode_header(from_str)
-            tem_str = []
-            for i in range(len(decoded_from)):
-                if decoded_from[i][1] is None:
-                    tem_str.append(decoded_from[i][0])
-                else:
-                    try:
-                        tem_str.append(decoded_from[0][0].decode(decoded_from[
-                            0][1]))
-                    except:
-                        tem_str.append(decoded_from[0][0])
-            new_tem_str = []
-            for i in tem_str:
-                try:
-                    new_tem_str.append(i.decode('utf-8'))
-                except:
-                    new_tem_str.append(i)
-            address = ' '.join(new_tem_str)
-            if flag == "full":
-                return address
-            else:
-                try:
-                    m = re.search(r'^.*(?=(<))', address)
-                    real_from = m.group()
-                    return real_from
-                except:
-                    return address
 
         mail_body = None
         status, last_email_sequence = self.imap_conn.select(location)
@@ -168,6 +185,13 @@ class Receiver:
             msg_list.append(self.fetch_email(mail_id, location))
         return msg_list
 
+    def fetch_header_list(self, criteria, location='INBOX'):
+        id_sequence = self.search_email(criteria, location)
+        header_list = []
+        for mail_id in id_sequence:
+            header_list.append(self.fetch_header(mail_id, location))
+        return id_sequence, header_list
+
 
 class PassMailBox(mail2account.PassAccount, Sender, Receiver):
     def __init__(self, identity):
@@ -196,15 +220,16 @@ class OauthMailBox(mail2account.OauthAccount, Sender, Receiver):
                  auth_uri=None,
                  token_uri=None,
                  redirect_uri=None):
-        mail2account.OauthAccount.__init__(self,
-                                           identity=identity,
-                                           client_id=client_id,
-                                           client_secret=client_secret,
-                                           scope=scope,
-                                           client_secret_json_file=client_secret_json_file,
-                                           auth_uri=auth_uri,
-                                           token_uri=token_uri,
-                                           redirect_uri=redirect_uri)
+        mail2account.OauthAccount.__init__(
+            self,
+            identity=identity,
+            client_id=client_id,
+            client_secret=client_secret,
+            scope=scope,
+            client_secret_json_file=client_secret_json_file,
+            auth_uri=auth_uri,
+            token_uri=token_uri,
+            redirect_uri=redirect_uri)
         Sender.__init__(self)
         Receiver.__init__(self)
         print("OauthMail >>> Mailbox initialized.")

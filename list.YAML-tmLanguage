@@ -1,37 +1,24 @@
 # [PackageDev] target_format: plist, ext: tmLanguage
 ---
-name: MailList
-scopeName: text.list
+name: Mail List Syntax Def (YAML)
+scopeName: text.mail.list
 fileTypes: []
 uuid: 0df86606-d7a6-4ed7-9a74-8d0c98c793eb
 
 patterns:
-  - name: mailbox
-    match: (?<=Mailbox:\s<)(.+)(?=>)
-
-patterns:
-  - name: title
-    match: (?i)\s+(ID)\b
-
-patterns:
-  - name: from
-    match: .+(From)\s{4,}.+
-
-patterns:
-  - name: subject
-    match: .+(Subject)\s{4,}.+
-
-patterns:
-  - name: time
-    match: .+(Time\s&\sDate)\s+
-
-patterns:
-  - name: content
-    match: ^(.{8})\s{4}(.{30})\s{8}(.{40})\s{8}(.{15})
-    Captures:
-      '1': {name: id}
-      '2': {name: sender}
+- include: '#list-info'
+  
+repository:
+  list-info:
+    patterns:
+    - name: test
+    match: ^(.{12})(.{39})(.{48})(.{12})
+    captures:
+      '1': {name: title}
+      '2': {name: from}
       '3': {name: subject}
-      '4': {name: date}
+      '4': {name: time}
+
+
 
 

@@ -18,14 +18,15 @@ def google_account(identity):
     if client_secret_json_file or (client_id and client_secret):
         print("OauthMail >>> Successfully get client_file/client_secret.")
 
-    google_oauth_mailbox = mailbox.OauthMailBox(identity=identity,
-                                                client_id=client_id,
-                                                client_secret=client_secret,
-                                                scope=G_MAIL_SCOPE,
-                                                client_secret_json_file=client_secret_json_file,
-                                                auth_uri=G_AUTH_URI,
-                                                token_uri=G_TOKEN_URI,
-                                                redirect_uri=G_REDIRECT_URI)
+    google_oauth_mailbox = mailbox.OauthMailBox(
+        identity=identity,
+        client_id=client_id,
+        client_secret=client_secret,
+        scope=G_MAIL_SCOPE,
+        client_secret_json_file=client_secret_json_file,
+        auth_uri=G_AUTH_URI,
+        token_uri=G_TOKEN_URI,
+        redirect_uri=G_REDIRECT_URI)
     google_oauth_mailbox.imap_server = "imap.googlemail.com"
     google_oauth_mailbox.smtp_server = "smtp.googlemail.com"
     google_oauth_mailbox.initiate()
@@ -40,14 +41,15 @@ def outlook_account(identity):
     client_secret = oauth_paras[2]
     if client_secret_json_file or (client_id and client_secret):
         print("OauthMail >>> Successfully get client_file/client_secret.")
-    outlook_oauth_mailbox = mailbox.OauthMailBox(identity=identity,
-                                                 client_id=client_id,
-                                                 client_secret=client_secret,
-                                                 scope=M_MAIL_SCOPE,
-                                                 client_secret_json_file=client_secret_json_file,
-                                                 auth_uri=M_AUTH_URI,
-                                                 token_uri=M_TOKEN_URI,
-                                                 redirect_uri=M_REDIRECT_URI)
+    outlook_oauth_mailbox = mailbox.OauthMailBox(
+        identity=identity,
+        client_id=client_id,
+        client_secret=client_secret,
+        scope=M_MAIL_SCOPE,
+        client_secret_json_file=client_secret_json_file,
+        auth_uri=M_AUTH_URI,
+        token_uri=M_TOKEN_URI,
+        redirect_uri=M_REDIRECT_URI)
     outlook_oauth_mailbox.imap_server = "imap-mail.outlook.com"
     outlook_oauth_mailbox.smtp_server = "smtp-mail.outlook.com"
     outlook_oauth_mailbox.imap_port = 465

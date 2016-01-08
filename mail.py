@@ -110,8 +110,10 @@ class SendMailThread(threading.Thread):
 
         mail_type = check_mailbox_type(self.identity)
         account = _MAIL_CLASS_DICT[mail_type](self.identity)
+
         print("OauthMail >>> " + self.identity + " Account object realized.")
-        account.start_smtp(account.smtp_server, account.smtp_port, account.tls_flag)
+        account.start_smtp(account.smtp_server, account.smtp_port,
+                           account.tls_flag)
         print("OauthMail >>> Successfully connect SMTP server, ready to sent!")
         sleep(10)
         if account.smtp_authenticate():
@@ -142,7 +144,10 @@ class MailSendCommand(sublime_plugin.WindowCommand):
         return True
 
     def run(self):
-
+        self.window.run_command("show_panel",
+                                {"panel": "console",
+                                 "toggle": "true"})
+        _SETTINGS = settinghandler.get_settings()
         view = self.window.active_view()
 
         def get_text(selector, joiner=" "):
@@ -151,6 +156,8 @@ class MailSendCommand(sublime_plugin.WindowCommand):
             return result
 
         # get identity
+        if _SETTINGS.show_prompt():
+            view.run_command("show_panel", {"panel": "output.exec"})
         identity = get_text(_SENDER_FLAG).strip()
 
         from email.mime.text import MIMEText
@@ -220,7 +227,8 @@ class MailSendCommand(sublime_plugin.WindowCommand):
                     encoders.encode_base64(msg)
                 # Set the filename parameter
                 filename = os.path.basename(path)
-                msg.add_header('Content-Disposition', 'attachment',
+                msg.add_header('Content-Disposition',
+                               'attachment',
                                filename=filename)
                 message_info.attach(msg)
         recipients = []
@@ -236,6 +244,8 @@ class MailSendCommand(sublime_plugin.WindowCommand):
             print("OauthMail >>> Message prepared.")
             mail_thread = SendMailThread(message_info, identity, recipients)
             mail_thread.start()
+            # self.window.run_command("hide_panel",
+            #                         {"cancel": "true"})
 
 
 class AttachThisFileCommand(sublime_plugin.WindowCommand):
@@ -257,8 +267,8 @@ class AttachThisFileCommand(sublime_plugin.WindowCommand):
             sublime.error_message("This view has no associated filename.")
             return
 
-        self.window.run_command('email_write',
-                                {'Attachments': [view.file_name()]})
+        self.window.run_command('email_write', {'Attachments':
+                                                [view.file_name()]})
 
 
 class SendAsMailCommand(sublime_plugin.WindowCommand):
@@ -314,7 +324,7 @@ class ListRecentMailCommand(sublime_plugin.WindowCommand):
         _SETTINGS = settinghandler.get_settings()
         list_period = _SETTINGS.get_list_period()
         since_date = date.today() - timedelta(days=list_period)
-        date_string = "(SINCE \""+since_date.strftime("%d-%b-%Y")+"\")"
+        date_string = "(SINCE \"" + since_date.strftime("%d-%b-%Y") + "\")"
         view = self.window.new_file()
         identity = _SETTINGS.get_default_identity()
         mailbox_queue = queue.Queue()
@@ -322,7 +332,8 @@ class ListRecentMailCommand(sublime_plugin.WindowCommand):
         IMAP_thread = MailBoxConnectionThread(mailbox_queue, identity)
         IMAP_thread.start()
         print("OauthMail >>> IMAP thread established.")
-        list_mail = GetEmailListThread(mailbox_queue, list_queue, date_string, None)
+        list_mail = GetEmailListThread(mailbox_queue, list_queue, date_string,
+                                       None)
         list_mail.start()
         print_in_view = PrintListInView(list_queue, view)
         print_in_view.start()
@@ -336,14 +347,17 @@ class MailBoxConnectionThread(threading.Thread):
 
     def run(self):
         self.mailbox.start_imap(self.mailbox.imap_server,
-                                self.mailbox.imap_port,
-                                self.mailbox.tls_flag)
+                                self.mailbox.imap_port, self.mailbox.tls_flag)
         if self.mailbox.imap_authenticate():
             self.mailbox_queue.put(self.mailbox)
 
 
 class GetEmailListThread(threading.Thread):
-    def __init__(self, in_mailbox_queue, out_list_queue, date_string, location=None):
+    def __init__(self,
+                 in_mailbox_queue,
+                 out_list_queue,
+                 date_string,
+                 location=None):
         threading.Thread.__init__(self)
         self.mailbox_queue = in_mailbox_queue
         self.list_queue = out_list_queue
@@ -355,8 +369,8 @@ class GetEmailListThread(threading.Thread):
 
     def run(self):
         mailbox = self.mailbox_queue.get()
-        mail_list = mailbox.fetch_selected_email(self.date_string)
-        print("OauthMail >>> Fetching mail titles...")
+        mail_list = mailbox.fetch_header_list(self.date_string)
+        print("OauthMail >>> Fetching mail headers...")
         self.list_queue.put(mail_list)
         self.mailbox_queue.put(mailbox)
 
@@ -403,17 +417,17 @@ class PrintListInView(threading.Thread):
 
         self.view.set_syntax_file(_LIST_SYNTAX_PATH)
         self.view.settings().set('color_scheme', _LIST_THEME_PATH)
-        mail_list = self.list_queue.get()
+        header_list = self.list_queue.get()
         snippet = ''
-        snippet = "Mailbox: "+mail_list[0]["mailbox"]+'\n\n'
-        snippet += "{:<8}\t{:^30}\t\t{:^40}\t\t{:^15}\n".format("ID", "From",
-                                                                "Subject",
-                                                                "Time & Date")
-        for msg in reversed(mail_list):
-            mail_id = msg['id']
-            mail_subject = msg["subject"]
-            mail_from = msg["from"]
-            mail_date = msg["date"]
+        snippet += "Mailbox: " + header_list[1][0]["To"] + '\n\n'
+        snippet += "{:<8}\t{:^30}\t\t{:^40}\t\t{:^15}\n".format(
+            "ID", "From", "Subject", "Time & Date")
+        header_list = zip(header_list[0], header_list[1])
+        for msg in reversed(list(header_list)):
+            mail_id = msg[0]
+            mail_subject = msg[1]["subject"]
+            mail_from = msg[1]["From"]
+            mail_date = msg[1]["Date"]
             if len(mail_subject) > 60:
                 mail_subject = mail_subject[:57] + '...'
             first_line, second_line = split_line(mail_subject)

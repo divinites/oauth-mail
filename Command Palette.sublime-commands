@@ -1,36 +1,36 @@
 [
     {
-        "caption": "Oauth Mail: Write E-Mail", 
+        "caption": "QuickMail: Write E-Mail", 
         "args": {}, 
         "command": "mail_write"
     }, 
     {
-        "caption": "Oauth Mail: Send E-Mail", 
+        "caption": "QuickMail: Send E-Mail", 
         "args": {}, 
         "command": "mail_send"
     }, 
     {
-        "caption": "Oauth Mail: Send As Mail", 
+        "caption": "QuickMail: Send As Mail", 
         "args": {}, 
         "command": "send_as_mail"
     }, 
     {
-        "caption": "Oauth Mail: Send as Attachment", 
+        "caption": "QuickMail: Send as Attachment", 
         "args": {}, 
         "command": "attach_this_file"
     }, 
     {
-        "caption": "Oauth Mail: Add to Addressbook", 
+        "caption": "QuickMail: Add to Addressbook", 
         "args": {}, 
         "command": "mail_add_to_addressbook"
     },
     {
-        "caption": "Oauth Mail: Show E-Mail", 
+        "caption": "QuickMail: Show E-Mail", 
         "args": {}, 
         "command": "show_mail"
     },
     {
-        "caption": "Oauth Mail: Show E-Mail List", 
+        "caption": "QuickMail: Show E-Mail List", 
         "args": {}, 
         "command": "list_recent_mail"
     }

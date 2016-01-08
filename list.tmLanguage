@@ -5,21 +5,29 @@
 	<key>fileTypes</key>
 	<array/>
 	<key>name</key>
-	<string>MailList</string>
+	<string>Mail List Syntax Def (YAML)</string>
 	<key>patterns</key>
 	<array>
 		<dict>
-			<key>Captures</key>
+			<key>include</key>
+			<string>#list-info</string>
+		</dict>
+	</array>
+	<key>repository</key>
+	<dict>
+		<key>list-info</key>
+		<dict>
+			<key>captures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>id</string>
+					<string>title</string>
 				</dict>
 				<key>2</key>
 				<dict>
 					<key>name</key>
-					<string>sender</string>
+					<string>from</string>
 				</dict>
 				<key>3</key>
 				<dict>
@@ -29,17 +37,22 @@
 				<key>4</key>
 				<dict>
 					<key>name</key>
-					<string>date</string>
+					<string>time</string>
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(.{8})\s{4}(.{30})\s{8}(.{40})\s{8}(.{15})</string>
-			<key>name</key>
-			<string>content</string>
+			<string>^(.{12})(.{39})(.{48})(.{12})</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>name</key>
+					<string>test</string>
+				</dict>
+			</array>
 		</dict>
-	</array>
+	</dict>
 	<key>scopeName</key>
-	<string>text.list</string>
+	<string>text.mail.list</string>
 	<key>uuid</key>
 	<string>0df86606-d7a6-4ed7-9a74-8d0c98c793eb</string>
 </dict>

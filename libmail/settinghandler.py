@@ -125,6 +125,10 @@ class SettingHandler:
         else:
             return 7
 
+    def show_prompt(self):
+        if self.settings.get("Show Prompt"):
+            return self.settings.get("Show Prompt")
+        return True
 # class Mailbox:
 #     def __init__(self, identity):
 #         self.imap_server = None
