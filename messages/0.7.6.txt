@@ -1,0 +1,4 @@
+- Fix some bugs
+- Add a lot console prompt, so users will have clear idea about which step they are in and whether their email has been sent successfully.
+- Add a preliminary but working email.tmLanguage
+- Console auto rises when sending and receiving emails.

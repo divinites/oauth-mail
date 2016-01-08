@@ -331,6 +331,9 @@ class ListRecentMailCommand(sublime_plugin.WindowCommand):
         list_queue = queue.Queue()
         IMAP_thread = MailBoxConnectionThread(mailbox_queue, identity)
         IMAP_thread.start()
+        self.window.run_command("show_panel",
+                                {"panel": "console",
+                                 "toggle": "true"})
         print("OauthMail >>> IMAP thread established.")
         list_mail = GetEmailListThread(mailbox_queue, list_queue, date_string,
                                        None)
