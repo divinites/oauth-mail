@@ -1,12 +1,12 @@
-# oauth-mail
+# QuickMail
 
-I developed the oauth-mail plug-in because I sometimes want to send directly what I wrote in sublime text, and I do not want to enter my password every time or store my plain-text email account name and password somewhere. That's why I choose to support oauthv2. with oauth method, the password will not be leaked to the third party, so it is basically safer. Nevertheless, there are still potential risks that other malicious plug-ins (if any) will get the cached "access_token" and obtain the access privileges that you grant to sublime text editor. All in all, Use this plug-in at your own risk, the author will not take any responsibility for any loss.  
+I developed the quick-mail plug-in because I sometimes want to send directly what I wrote in sublime text, and I do not want to enter my password every time or store my plain-text email account name and password somewhere. That's why I choose to support oauthv2. With oauth method, the password will not be leaked to the third party, so it is basically safer. Nevertheless, there are still potential risks that other malicious plug-ins (if any) will get the cached "access_token" and obtain the access privileges that you grant to sublime text editor. All in all, Use this plug-in at your own risk, the author will not take any responsibility for any loss.  
 
 ## Set-up steps:
 
-Currently, oauth-mail supports Microsoft outlook.com (including hotmail, livemail, etc.) and gmail **and most of standard IMAP/SMTP mail servers**.
+Currently, quick-mail supports Microsoft outlook.com (including hotmail, livemail, etc.) and gmail **and most of standard IMAP/SMTP mail servers**.
 
-OauthMail supports two authentication methods: oauth authentication and password authentication.
+QuickMail supports two authentication methods: oauth authentication and password authentication.
 
 
 The setting template is
@@ -71,7 +71,7 @@ That's it. In the first time you use this plug-in, it will redirect your an auth
    - Adding signature support
    - ~~Adding IMAP support, so users will be able to receive recent emails~~
    - Adding reply and forwarding command
-   - Using tmLanguage to define different colors when displaying email list
+   - ~~Using tmLanguage to define different colors when displaying email list~~
 
 I have no intention to make it a full functional email agent with complicated rules, since we already have so many excellent programs. I will keep it light-weight, only necessary functions will be added.
 
@@ -85,7 +85,7 @@ I have no intention to make it a full functional email agent with complicated ru
 - v. 0.4.0 add YAML support (still working on it)
 - v. 0.4.1 accepted by package control channel
 - v. 0.6.6 reconstruct the code and support username/password authentication
-
+- v. 0.8.0 add tmLanguage to color mail list
 
 ## Thanks:
 
