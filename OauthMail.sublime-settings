@@ -11,6 +11,7 @@
                                         "signature": "--XX",
                                         "client_id": "XXXXX",
                                         "client_secret": "XXXXX",
+                                        "tls": "yes",
                                         "default": "yes"
                                       }
                     },
@@ -23,6 +24,7 @@
                                         "name": "XXXX",
                                         "client_id": "XXXXX",
                                         "client_secret": "XXXXX",
+                                        "tls": "yes",
                                         "default": "no"
                                      }
                     },

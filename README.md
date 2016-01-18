@@ -60,7 +60,7 @@ The first time you using this email, an input panel will show up and sequentiall
 - **send_mail**:  do exactly as the command name, describes, this command will send the mail you write
 - **send_as_mail**: this command will add email header on top of all the content in current view
 - **show_mail_list**: this command will show the default email list, you can set it in user setting files.
-- **show_mail**: it would be better to use it after show mail list, since this command with show an input panel, you can enter the mail ID (listed by **show_mail_list** command) and a new view will open and show your mail content.
+- **show_mail**: it would be better to use it after showing mail list, since this command with show an input panel, you can enter the mail ID (listed by **show_mail_list** command) and a new view will open and show your mail content.
 
 That's it. In the first time you use this plug-in, it will redirect your an authorization page, where you can click "yes" for authorization, after you see the page "the authentication flow has completed", you can close that page and return to Sublime Text. In the next time and what so ever, you can instantly send emails without any additional step, since the program will automatically deal with everything and refresh the access_token when necessary. 
 
