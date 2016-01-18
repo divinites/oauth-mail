@@ -40,6 +40,7 @@ def from_dealing(from_str, flag="name"):
     real_from = ''
     decoded_from = decode_header(from_str)
     tem_str = []
+    address = ""
     for i in range(len(decoded_from)):
         if decoded_from[i][1] is None:
             tem_str.append(decoded_from[i][0])
