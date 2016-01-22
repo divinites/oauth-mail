@@ -13,8 +13,8 @@ from time import sleep
 from .libmail import quicklog
 # Set YAML flags and global variable _LOADED_SETTINGS
 
-_LOADED_SETTINGS = None
-_SETTING_FILE = "QuickMail.sublime-settings"
+# _LOADED_SETTINGS = None
+# _SETTING_FILE = "QuickMail.sublime-settings"
 _SENDER_FLAG = 'meta.address.sender string'
 _ATTACHMENT_FLAG = 'meta.attachment string'
 _SUBJECT_FLAG = 'meta.subject string'
@@ -43,9 +43,9 @@ _MAIL_CLASS_DICT = {
 }
 
 
-def plugin_loaded():
-    global _LOADED_SETTINGS
-    _LOADED_SETTINGS = sublime.load_settings(_SETTING_FILE)
+# def plugin_loaded():
+#     global _LOADED_SETTINGS
+#     _LOADED_SETTINGS = sublime.load_settings(_SETTING_FILE)
 
 
 def check_mailbox_type(identity):

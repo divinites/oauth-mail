@@ -1,12 +1,22 @@
 import sublime
 from imaplib import IMAP4_SSL_PORT
+from os.path import dirname
+from os.path import realpath
+import os
 
+NEW_SETTING_FILE = "QuickMail.sublime-settings"
+OLD_SETTING_FILE = "OauthMail.sublime-settings"
 
-_SETTING_FILE = "QuickMail.sublime-settings"
+_SETTING_PATH = os.path.join(dirname(dirname(dirname(realpath(__file__)))), "Packages/User")
 
 
 def load_settings():
-    return sublime.load_settings(_SETTING_FILE)
+    if os.path.isfile(os.path.join(_SETTING_PATH, NEW_SETTING_FILE)):
+        sublime.load_settings(NEW_SETTING_FILE)
+    elif os.path.isfile(os.path.join(_SETTING_PATH, OLD_SETTING_FILE)):
+        sublime.load_settings(OLD_SETTING_FILE)
+    else:
+        raise FileNotFoundError("Please Configure your mailbox first!")
 
 
 def get_settings():
