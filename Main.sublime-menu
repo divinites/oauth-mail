@@ -10,27 +10,27 @@
 				"id": "package-settings",
 				"children": [
 					{
-						"caption": "Oauth Mail",
+						"caption": "Quick Mail",
 						"children": [
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/Oauth Mail/OauthMail.sublime-keymap"},
+								"args": {"file": "${packages}/QuickMail/QuickMail.sublime-keymap"},
 								"caption": "Keymap – Default"
 							},
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/User/OauthMail.sublime-keymap"},
+								"args": {"file": "${packages}/User/QuickMail.sublime-keymap"},
 								"caption": "keymap – User"
 							},
 							{ "caption": "-" },
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/Oauth Mail/OauthMail.sublime-settings"},
+								"args": {"file": "${packages}/QuickMail/QuickMail.sublime-settings"},
 								"caption": "Mail Settings - Default"
 							},
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/User/OauthMail.sublime-settings"},
+								"args": {"file": "${packages}/User/QuickMail.sublime-settings"},
 								"caption": "Mail Settings - User"
 							}
 						]

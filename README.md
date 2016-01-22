@@ -11,11 +11,11 @@ QuickMail supports two authentication methods: oauth authentication and password
 
 The setting template is
 
-Preference -> Package Settings -> Oauth Mail -> Mail settings - Default
+Preference -> Package Settings -> Quick Mail -> Mail settings - Default
 
  you should copy it and paste to
 
-Preference -> Package Settings -> Oauth Mail -> Mail settings - User
+Preference -> Package Settings -> Quick Mail -> Mail settings - User
 
 to configure your own mail settings.
 
@@ -49,7 +49,7 @@ Google also provide a downloadable json-format configuration file (including cli
 
 If oauth method does not work for you, or you want to use email other than gmail and microsoft mail, you can use password Method.
 
-First, add an entry *"authentication": "password"* in OauthMail.sublime-settings, and do not forget entering the correct imap/smtp server.
+First, add an entry *"authentication": "password"* in QuickMail.sublime-settings, and do not forget entering the correct imap/smtp server.
 
 The first time you using this email, an input panel will show up and sequentially ask you to input your username and password. Input it in 10 second, and that's all. Username and password will be cached so you do not need to enter it again. (I will add an option to let you decide whether username and password should be cached or not)
 
@@ -67,11 +67,15 @@ That's it. In the first time you use this plug-in, it will redirect your an auth
 ## Future Development:
 
 1. This project is still in a very early stage, now it supports sending and receiving mails via Outlook mails and Gmails. You are welcome to send me request about more email server support, or, send me a pull request. 
-2. Next step: 
+
+2. Enhancement: 
    - Adding signature support
    - ~~Adding IMAP support, so users will be able to receive recent emails~~
-   - Adding reply and forwarding command
+   - Adding reply, reply_all and forwarding command
    - ~~Using tmLanguage to define different colors when displaying email list~~
+   - Use Up-Down Arrow keys to browse mail list and Right arrow key to read email
+   - fold, not cut over-long title in the mail list
+   - Add a panel for mailbox selection
 
 I have no intention to make it a full functional email agent with complicated rules, since we already have so many excellent programs. I will keep it light-weight, only necessary functions will be added.
 

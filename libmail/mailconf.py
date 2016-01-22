@@ -1,5 +1,6 @@
 from . import mailbox
 from . import settinghandler
+from . import quicklog
 G_AUTH_URI = 'https://accounts.google.com/o/oauth2/auth'
 G_TOKEN_URI = "https://accounts.google.com/o/oauth2/token"
 G_MAIL_SCOPE = "https://mail.google.com"
@@ -16,7 +17,7 @@ def google_account(identity):
     client_id = oauth_paras[1]
     client_secret = oauth_paras[2]
     if client_secret_json_file or (client_id and client_secret):
-        print("OauthMail >>> Successfully get client_file/client_secret.")
+        quicklog.QuickLog.log("Successfully get client_file/client_secret.")
 
     google_oauth_mailbox = mailbox.OauthMailBox(
         identity=identity,
@@ -30,7 +31,7 @@ def google_account(identity):
     google_oauth_mailbox.imap_server = "imap.googlemail.com"
     google_oauth_mailbox.smtp_server = "smtp.googlemail.com"
     google_oauth_mailbox.initiate()
-    print("OauthMail >>> Google Account initiated.")
+    quicklog.QuickLog.log("Google Account initiated.")
     return google_oauth_mailbox
 
 
@@ -40,7 +41,7 @@ def outlook_account(identity):
     client_id = oauth_paras[1]
     client_secret = oauth_paras[2]
     if client_secret_json_file or (client_id and client_secret):
-        print("OauthMail >>> Successfully get client_file/client_secret.")
+        quicklog.QuickLog.log("Successfully get client_file/client_secret.")
     outlook_oauth_mailbox = mailbox.OauthMailBox(
         identity=identity,
         client_id=client_id,
@@ -55,12 +56,12 @@ def outlook_account(identity):
     outlook_oauth_mailbox.imap_port = 465
     outlook_oauth_mailbox.smtp_port = 587
     outlook_oauth_mailbox.initiate()
-    print("OauthMail >>> Outlook Account initiated.")
+    quicklog.QuickLog.log("Outlook Account initiated.")
     return outlook_oauth_mailbox
 
 
 def pass_account(identity):
     pass_mailbox = mailbox.PassMailBox(identity)
     pass_mailbox.initiate()
-    print("OauthMail >>> Pass Account initiated.")
+    quicklog.QuickLog.log("Pass Account initiated.")
     return pass_mailbox

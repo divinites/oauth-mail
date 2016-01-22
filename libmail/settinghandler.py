@@ -2,7 +2,7 @@ import sublime
 from imaplib import IMAP4_SSL_PORT
 
 
-_SETTING_FILE = "OauthMail.sublime-settings"
+_SETTING_FILE = "QuickMail.sublime-settings"
 
 
 def load_settings():

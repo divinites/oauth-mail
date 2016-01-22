@@ -6,11 +6,11 @@ OauthMail supports two authentication methods: oauth authentication and password
 
 The setting template is
 
-Preference -> Package Settings -> Oauth Mail -> Mail settings - Default
+Preference -> Package Settings -> Quick Mail -> Mail settings - Default
 
  you should copy it and paste to
 
-Preference -> Package Settings -> Oauth Mail -> Mail settings - User
+Preference -> Package Settings -> Quick Mail -> Mail settings - User
 
 to configure your own mail settings.
 
@@ -46,7 +46,7 @@ Google also provide a downloadable json-format configuration file (including cli
 
 If oauth method does not work for you, or you want to use email other than gmail and microsoft mail, you can use password Method.
 
-First, add an entry *"authentication": "password"* in OauthMail.sublime-settings, and do not forget entering the correct imap/smtp server.
+First, add an entry *"authentication": "password"* in QuickMail.sublime-settings, and do not forget entering the correct imap/smtp server.
 
 The first time you using this email, an input panel will show up and sequentially ask you to input your username and password. Input it in 10 second, and that's all. Username and password will be cached so you do not need to enter it again. (I will add an option to let you decide whether username and password should be cached or not)
 

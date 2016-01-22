@@ -2,6 +2,7 @@ from . import oauth2mail
 from . import pass2mail
 from . import settinghandler
 from imaplib import IMAP4_SSL_PORT
+from . import quicklog
 
 
 class OauthAccount(oauth2mail.OauthMailSession):
@@ -29,23 +30,23 @@ class OauthAccount(oauth2mail.OauthMailSession):
             auth_uri=auth_uri,
             token_uri=token_uri,
             redirect_uri=redirect_uri)
-        print("OauthMail >>> start initializing OauthAccount Session...")
+        quicklog.QuickLog.log("start initializing OauthAccount Session...")
 
     def initiate(self):
         if self._token_is_cached():
             self._load_cached_token()
-            print("OauthMail >>> Loading cached information...")
+            quicklog.QuickLog.log("Loading cached information...")
             if self._token_expired():
-                print("OauthMail >>> Refreshing token...")
+                quicklog.QuickLog.log("Refreshing token...")
                 self._refresh_token()
         else:
-            print("OauthMail >>> No previous cache, try acquiring...")
+            quicklog.QuickLog.log("No previous cache, try acquiring...")
             auth_code = self._acquire_code()
             self._get_token(auth_code)
             self._save_in_cache()
-            print("OauthMail >>> New token saved.")
+            quicklog.QuickLog.log("New token saved.")
         self.set_tls()
-        print("OauthMail >>> TLS flag is set to " + str(self.tls_flag))
+        quicklog.QuickLog.log("TLS flag is set to " + str(self.tls_flag))
 
     def set_tls(self):
         self.tls_flag = settinghandler.get_settings().is_tls(self.identity)
@@ -63,19 +64,19 @@ class PassAccount(pass2mail.PassSession):
     def initiate(self):
         try:
             self.get_imap()
-            print("OauthMail >>> IMAP info obtained")
+            quicklog.QuickLog.log("IMAP info obtained")
             self.get_smtp()
-            print("OauthMail >>> SMTP info obtained")
+            quicklog.QuickLog.log("SMTP info obtained")
             self.set_tls()
-            print("OauthMail >>> TLS flag is set to " + str(self.tls_flag))
+            quicklog.QuickLog.log("TLS flag is set to " + str(self.tls_flag))
         except:
-            print("Error in get necessary parameters")
+            quicklog.QuickLog.log("Error in get necessary parameters")
         if self._is_cached():
             self._load_cache()
-            print("OauthMail >>> Loading cached information...")
+            quicklog.QuickLog.log("Loading cached information...")
         else:
             self.get_username()
-            print("OauthMail >>> Getting Username/Password")
+            quicklog.QuickLog.log("Getting Username/Password")
 
     def get_imap(self):
         self.imap_server, self.imap_port = settinghandler.get_settings(

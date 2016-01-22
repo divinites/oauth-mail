@@ -8,7 +8,7 @@ from os.path import realpath
 
 
 _PACKAGE_PATH = dirname(dirname(dirname(realpath(__file__))))
-_CACHE_PATH = os.path.join(_PACKAGE_PATH, "Packages/User/Oauthmail.cache")
+_CACHE_PATH = os.path.join(_PACKAGE_PATH, "Packages/User/QuickMail.cache")
 
 
 def encrypt(strings):

@@ -10,11 +10,11 @@ import queue
 from datetime import date
 from datetime import timedelta
 from time import sleep
-
+from .libmail import quicklog
 # Set YAML flags and global variable _LOADED_SETTINGS
 
 _LOADED_SETTINGS = None
-_SETTING_FILE = "OauthMail.sublime-settings"
+_SETTING_FILE = "QuickMail.sublime-settings"
 _SENDER_FLAG = 'meta.address.sender string'
 _ATTACHMENT_FLAG = 'meta.attachment string'
 _SUBJECT_FLAG = 'meta.subject string'
@@ -60,9 +60,9 @@ def check_mailbox_type(identity):
         prog = re.compile(checker)
         result = prog.match(identity)
         if result:
-            print("OauthMail >>> " + name + " Mailbox detected")
+            quicklog.QuickLog.log("" + name + " Mailbox detected")
             return name
-    print("OauthMail >>>  Not an OauthMail, will need Username/Password.")
+    quicklog.QuickLog.log(" Not an QuickMail, will need Username/Password.")
     return "generic"
 
 
@@ -111,18 +111,18 @@ class SendMailThread(threading.Thread):
         mail_type = check_mailbox_type(self.identity)
         account = _MAIL_CLASS_DICT[mail_type](self.identity)
 
-        print("OauthMail >>> " + self.identity + " Account object realized.")
+        quicklog.QuickLog.log("" + self.identity + " Account object realized.")
         account.start_smtp(account.smtp_server, account.smtp_port,
                            account.tls_flag)
-        print("OauthMail >>> Successfully connect SMTP server, ready to sent!")
+        quicklog.QuickLog.log("Successfully connect SMTP server, ready to sent!")
         sleep(10)
         if account.smtp_authenticate():
-            print("OauthMail >>> Start Sending email...")
+            quicklog.QuickLog.log("Start Sending email...")
             account.send_mail(self.identity, self.recipients, self.msg)
-            print("OauthMail >>> Succeeded.")
+            quicklog.QuickLog.log("Succeeded.")
             sublime.status_message(_SUCCESS_MESSAGE)
         else:
-            print("OauthMail >>> failed.")
+            quicklog.QuickLog.log("failed.")
             sublime.status_message(_FAIL_MESSAGE)
 
 #        self.server_account.authenticate(0)
@@ -241,7 +241,7 @@ class MailSendCommand(sublime_plugin.WindowCommand):
             if typ == 'bcc':
                 continue
             message_info[typ.capitalize()] = rcpt
-            print("OauthMail >>> Message prepared.")
+            quicklog.QuickLog.log("Message prepared.")
             mail_thread = SendMailThread(message_info, identity, recipients)
             mail_thread.start()
             # self.window.run_command("hide_panel",
@@ -302,10 +302,10 @@ class ShowMailCommand(sublime_plugin.WindowCommand):
         mailbox_queue = queue.Queue()
         mail_queue = queue.Queue()
         IMAP_thread = MailBoxConnectionThread(mailbox_queue, identity)
-        print("OauthMail >>> IMAP thread establsihed.")
+        quicklog.QuickLog.log("IMAP thread establsihed.")
         IMAP_thread.start()
         fetch_mail = FetchMailThread(mail_id, mailbox_queue, mail_queue)
-        print("OauthMail >>> Fetching mails...")
+        quicklog.QuickLog.log("Fetching mails...")
         fetch_mail.start()
         print_in_view = PrintMailInView(mail_queue, view)
         print_in_view.start()
@@ -334,7 +334,7 @@ class ListRecentMailCommand(sublime_plugin.WindowCommand):
         self.window.run_command("show_panel",
                                 {"panel": "console",
                                  "toggle": "true"})
-        print("OauthMail >>> IMAP thread established.")
+        quicklog.QuickLog.log("IMAP thread established.")
         list_mail = GetEmailListThread(mailbox_queue, list_queue, date_string,
                                        None)
         list_mail.start()
@@ -373,7 +373,7 @@ class GetEmailListThread(threading.Thread):
     def run(self):
         mailbox = self.mailbox_queue.get()
         mail_list = mailbox.fetch_header_list(self.date_string)
-        print("OauthMail >>> Fetching mail headers...")
+        quicklog.QuickLog.log("Fetching mail headers...")
         self.list_queue.put(mail_list)
         self.mailbox_queue.put(mailbox)
 
@@ -395,7 +395,7 @@ class FetchMailThread(threading.Thread):
     def run(self):
         mailbox = self.mailbox_queue.get()
         msg = mailbox.fetch_email(self.email_id, self.location)
-        print("OauthMail >>> Mail Fetched.")
+        quicklog.QuickLog.log("Mail Fetched.")
         self.mail_queue.put(msg)
         self.mailbox_queue.put(mailbox)
 
@@ -440,7 +440,7 @@ class PrintListInView(threading.Thread):
                 '', '', second_line, mail_date[11:])
         snippet += "\n"
         self.view.run_command("insert_snippet", {"contents": snippet})
-        print("OauthMail >>> Mail list acquired.")
+        quicklog.QuickLog.log("Mail list acquired.")
 
 
 class PrintMailInView(threading.Thread):
@@ -460,4 +460,4 @@ class PrintMailInView(threading.Thread):
         snippet += "\n"
         snippet += "{}\n".format(msg["body"])
         self.view.run_command("insert_snippet", {"contents": snippet})
-        print("OauthMail >>> Mail acquired.")
+        quicklog.QuickLog.log("Mail acquired.")
