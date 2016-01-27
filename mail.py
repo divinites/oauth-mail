@@ -10,6 +10,7 @@ import queue
 from datetime import date
 from datetime import timedelta
 from time import sleep
+from time import time
 from .libmail import quicklog
 # Set YAML flags and global variable _LOADED_SETTINGS
 
@@ -20,6 +21,7 @@ _ATTACHMENT_FLAG = 'meta.attachment string'
 _SUBJECT_FLAG = 'meta.subject string'
 _MAIL_PREFIX_FLAG = 'text.email '
 _MESSAGE_FLAG = 'meta.message'
+_PANEL_LOCK = False
 
 
 def _RECIPIENTS_FLAG(typ):
@@ -43,9 +45,29 @@ _MAIL_CLASS_DICT = {
 }
 
 
-# def plugin_loaded():
-#     global _LOADED_SETTINGS
-#     _LOADED_SETTINGS = sublime.load_settings(_SETTING_FILE)
+def wait_lock(waiting_time=None):
+    if not waiting_time:
+        waiting_time = 10
+
+    def _wait_lock(function):
+        def wrapp(*args):
+            global _PANEL_LOCK
+            current_time = int(time())
+            time_limit = current_time + waiting_time
+            while current_time < time_limit:
+                if not _PANEL_LOCK:
+                    _PANEL_LOCK = True
+                    function(*args)
+                    _PANEL_LOCK = False
+                    break
+                else:
+                    sleep(1)
+                    current_time += 1
+            else:
+                _PANEL_LOCK = False
+                raise ValueError("Time Out!")
+        return wrapp
+    return _wait_lock
 
 
 def check_mailbox_type(identity):
@@ -322,21 +344,33 @@ class ListRecentMailCommand(sublime_plugin.WindowCommand):
 
     def run(self):
         _SETTINGS = settinghandler.get_settings()
+        self.mailbox_list = _SETTINGS.get_mailbox_list()
+        self.window.run_command("show_panel", {"panel": "console", "toggle": "true"})
+        entries = [[mailbox["identity"], "authentication method: {}".format(mailbox["authentication"])]
+                   for mailbox in self.mailbox_list]
+        self.show_mailbox_panel(entries)
+
+    @wait_lock(10)
+    def show_mailbox_panel(self, entries):
+        self.window.show_quick_panel(entries, self._on_panel_selection)
+
+    def _on_panel_selection(self, selection):
+        if selection >= 0:
+            self.window.run_command("connect_mailbox", {"identity": self.mailbox_list[selection]["identity"]})
+
+
+class ConnectMailboxCommand(sublime_plugin.WindowCommand):
+    def run(self, identity):
+        view = self.window.new_file()
+        _SETTINGS = settinghandler.get_settings()
         list_period = _SETTINGS.get_list_period()
         since_date = date.today() - timedelta(days=list_period)
         date_string = "(SINCE \"" + since_date.strftime("%d-%b-%Y") + "\")"
-        view = self.window.new_file()
-        identity = _SETTINGS.get_default_identity()
         mailbox_queue = queue.Queue()
         list_queue = queue.Queue()
         IMAP_thread = MailBoxConnectionThread(mailbox_queue, identity)
         IMAP_thread.start()
-        self.window.run_command("show_panel",
-                                {"panel": "console",
-                                 "toggle": "true"})
-        quicklog.QuickLog.log("IMAP thread established.")
-        list_mail = GetEmailListThread(mailbox_queue, list_queue, date_string,
-                                       None)
+        list_mail = GetEmailListThread(mailbox_queue, list_queue, date_string, None)
         list_mail.start()
         print_in_view = PrintListInView(list_queue, view)
         print_in_view.start()
@@ -351,7 +385,13 @@ class MailBoxConnectionThread(threading.Thread):
     def run(self):
         self.mailbox.start_imap(self.mailbox.imap_server,
                                 self.mailbox.imap_port, self.mailbox.tls_flag)
+        self.authenticate()
+        quicklog.QuickLog.log(" Mailbox connected.")
+
+    @wait_lock(10)
+    def authenticate(self):
         if self.mailbox.imap_authenticate():
+            quicklog.QuickLog.log("IMAP thread established.")
             self.mailbox_queue.put(self.mailbox)
 
 
@@ -371,6 +411,10 @@ class GetEmailListThread(threading.Thread):
             self.location = location
 
     def run(self):
+        self.get_mail_list()
+        quicklog.QuickLog.log("Mail list acquired.")
+
+    def get_mail_list(self):
         mailbox = self.mailbox_queue.get()
         mail_list = mailbox.fetch_header_list(self.date_string)
         quicklog.QuickLog.log("Fetching mail headers...")
@@ -440,7 +484,7 @@ class PrintListInView(threading.Thread):
                 '', '', second_line, mail_date[11:])
         snippet += "\n"
         self.view.run_command("insert_snippet", {"contents": snippet})
-        quicklog.QuickLog.log("Mail list acquired.")
+        quicklog.QuickLog.log("Mail list printed.")
 
 
 class PrintMailInView(threading.Thread):

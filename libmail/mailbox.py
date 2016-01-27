@@ -111,19 +111,20 @@ class Receiver:
 
     def start_imap(self, imap_server, imap_port, tls_flag):
         try:
-            self.imap_conn = imaplib.IMAP4_SSL(imap_server, imap_port)
-            quicklog.QuickLog.log("Try establish SSL IMAP connection...")
-        except:
             self.imap_conn = imaplib.IMAP4(imap_server, imap_port)
             quicklog.QuickLog.log("Try establish normal SMTP connection...")
             if tls_flag:
                 quicklog.QuickLog.log("Starting TLS...")
                 self.imap_conn.starttls()
+        except:
+            self.imap_conn = imaplib.IMAP4_SSL(imap_server, imap_port)
+            quicklog.QuickLog.log("Try establish SSL IMAP connection...")
 
     def is_imap_auth(self, auth_message):
         if auth_message[0] == 'OK':
             quicklog.QuickLog.log("Authentication succeeds.")
             return True
+        quicklog.QuickLog.log(" Authentication fails.")
         print(auth_message)
         return False
 
@@ -207,12 +208,12 @@ class PassMailBox(mail2account.PassAccount, Sender, Receiver):
         return self.is_smtp_auth(auth_message)
 
     def imap_authenticate(self):
-
+        print(self.username + self.password)
         auth_message = self.imap_conn.login(self.username, self.password)
         return self.is_imap_auth(auth_message)
 
 
-class QuickMailBox(mail2account.OauthAccount, Sender, Receiver):
+class OauthMailBox(mail2account.OauthAccount, Sender, Receiver):
     def __init__(self,
                  identity,
                  client_id=None,

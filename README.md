@@ -75,7 +75,7 @@ That's it. In the first time you use this plug-in, it will redirect your an auth
    - ~~Using tmLanguage to define different colors when displaying email list~~
    - Use Up-Down Arrow keys to browse mail list and Right arrow key to read email
    - fold, not cut over-long title in the mail list
-   - Add a panel for mailbox selection
+   - ~~Add a panel for mailbox selection~~
 
 I have no intention to make it a full functional email agent with complicated rules, since we already have so many excellent programs. I will keep it light-weight, only necessary functions will be added.
 
