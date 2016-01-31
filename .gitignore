@@ -5,4 +5,5 @@
 *.todo
 *.pyc
 *.sublime-project
+*.sublime-workspace
 __pycache__
