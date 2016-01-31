@@ -6,7 +6,8 @@ from .chardet import detect
 from email.header import decode_header
 from email.parser import HeaderParser
 import email
-from . import quicklog
+from .quicklog import QuickLog
+import queue
 
 
 def auto_decode(str_body):
@@ -78,16 +79,16 @@ class Sender:
 
     def send_mail(self, identity, recipients, msg):
         if isinstance(msg, str):
-            quicklog.QuickLog.log("Sending pure Text Message.")
+            QuickLog.log("Sending pure Text Message.")
             self.smtp_conn.sendmail(identity, recipients, msg)
         else:
-            quicklog.QuickLog.log("Sending pure Text Message.(By Converting)")
+            QuickLog.log("Sending pure Text Message.(By Converting)")
             self.smtp_conn.sendmail(identity, recipients, msg.as_string())
         self.smtp_conn.quit()
 
     def is_smtp_auth(self, auth_message):
         if auth_message[0] == 235:
-            quicklog.QuickLog.log("Authentication succeeds.")
+            QuickLog.log("Authentication succeeds.")
             return True
         print(auth_message)
         return False
@@ -95,12 +96,12 @@ class Sender:
     def start_smtp(self, smtp_server, smtp_port, tls_flag):
         # try:
         #     self.smtp_conn = smtplib.SMTP_SSL(smtp_server, smtp_port)
-        #     quicklog.QuickLog.log("Try establish SSL SMTP connection...")
+        #     QuickLog.log("Try establish SSL SMTP connection...")
         # except:
         self.smtp_conn = smtplib.SMTP(smtp_server, smtp_port)
-        quicklog.QuickLog.log("Try establish normal SMTP connection...")
+        QuickLog.log("Try establish normal SMTP connection...")
         if tls_flag:
-            quicklog.QuickLog.log("Starting TLS...")
+            QuickLog.log("Starting TLS...")
             self.smtp_conn.starttls()
         self.smtp_conn.ehlo()
 
@@ -112,19 +113,19 @@ class Receiver:
     def start_imap(self, imap_server, imap_port, tls_flag):
         try:
             self.imap_conn = imaplib.IMAP4(imap_server, imap_port)
-            quicklog.QuickLog.log("Try establish normal SMTP connection...")
+            QuickLog.log("Try establish normal SMTP connection...")
             if tls_flag:
-                quicklog.QuickLog.log("Starting TLS...")
+                QuickLog.log("Starting TLS...")
                 self.imap_conn.starttls()
         except:
             self.imap_conn = imaplib.IMAP4_SSL(imap_server, imap_port)
-            quicklog.QuickLog.log("Try establish SSL IMAP connection...")
+            QuickLog.log("Try establish SSL IMAP connection...")
 
     def is_imap_auth(self, auth_message):
         if auth_message[0] == 'OK':
-            quicklog.QuickLog.log("Authentication succeeds.")
+            QuickLog.log("Authentication succeeds.")
             return True
-        quicklog.QuickLog.log(" Authentication fails.")
+        QuickLog.log(" Authentication fails.")
         print(auth_message)
         return False
 
@@ -201,7 +202,7 @@ class PassMailBox(mail2account.PassAccount, Sender, Receiver):
         mail2account.PassAccount.__init__(self, identity)
         Sender.__init__(self)
         Receiver.__init__(self)
-        quicklog.QuickLog.log("Mailbox initialized.")
+        QuickLog.log("Mailbox initialized.")
 
     def smtp_authenticate(self):
         auth_message = self.smtp_conn.login(self.username, self.password)
@@ -235,7 +236,7 @@ class OauthMailBox(mail2account.OauthAccount, Sender, Receiver):
             redirect_uri=redirect_uri)
         Sender.__init__(self)
         Receiver.__init__(self)
-        quicklog.QuickLog.log("Mailbox initialized.")
+        QuickLog.log("Mailbox initialized.")
 
     def smtp_authenticate(self):
         authstr = self.gen_auth_string(self.identity, True)

@@ -55,6 +55,7 @@ class PassSession:
             root = {}
             root[encrypt("password")] = encrypt(self.password)
             root[encrypt("username")] = encrypt(self.username)
+            print(self.cache_file)
             with open(cache_path(self.cache_file), 'w') as cache_file:
                 json.dump(root, cache_file)
         else:

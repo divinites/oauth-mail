@@ -59,7 +59,7 @@ The first time you using this email, an input panel will show up and sequentiall
 - **write_mail**: do exactly as the command name describes, this command will open a new view
 - **send_mail**:  do exactly as the command name, describes, this command will send the mail you write
 - **send_as_mail**: this command will add email header on top of all the content in current view
-- **show_mail_list**: this command will show the default email list, you can set it in user setting files.
+- **show_mail_list**: this command will show a panel, you can choose which mailbox to open, the default mailbox will be listed on the top.
 - **show_mail**: it would be better to use it after showing mail list, since this command with show an input panel, you can enter the mail ID (listed by **show_mail_list** command) and a new view will open and show your mail content.
 
 That's it. In the first time you use this plug-in, it will redirect your an authorization page, where you can click "yes" for authorization, after you see the page "the authentication flow has completed", you can close that page and return to Sublime Text. In the next time and what so ever, you can instantly send emails without any additional step, since the program will automatically deal with everything and refresh the access_token when necessary. 
@@ -71,7 +71,7 @@ That's it. In the first time you use this plug-in, it will redirect your an auth
 2. Enhancement: 
    - Adding signature support
    - ~~Adding IMAP support, so users will be able to receive recent emails~~
-   - Adding reply, reply_all and forwarding command
+   - ~~Adding reply, reply_all and forwarding command~~
    - ~~Using tmLanguage to define different colors when displaying email list~~
    - Use Up-Down Arrow keys to browse mail list and Right arrow key to read email
    - fold, not cut over-long title in the mail list
@@ -90,6 +90,11 @@ I have no intention to make it a full functional email agent with complicated ru
 - v. 0.4.1 accepted by package control channel
 - v. 0.6.6 reconstruct the code and support username/password authentication
 - v. 0.8.0 add tmLanguage to color mail list
+- v. 0.8.5 a bunch of improvement
+    +  add reply, reply all, forward command
+    +  add a panel for mailbox selection
+    +  Email address are divided into two lines.
+    +  Mail will not initialize a new IMAP connection everytime, it will reuse the active connection if possible.
 
 ## Thanks:
 

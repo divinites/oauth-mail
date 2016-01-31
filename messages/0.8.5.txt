@@ -1,0 +1,5 @@
+- v. 0.8.2 a bunch of improvement
+    +  add reply, reply all, forward command
+    +  add a panel for mailbox selection
+    +  Email address are divided into two lines.
+    +  Mail will not initialize a new IMAP connection everytime, it will reuse the active connection if possible.

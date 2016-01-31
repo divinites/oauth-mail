@@ -1,8 +1,6 @@
 import sublime
 from imaplib import IMAP4_SSL_PORT
-from os.path import dirname
-from os.path import realpath
-import os
+
 
 NEW_SETTING_FILE = "QuickMail.sublime-settings"
 OLD_SETTING_FILE = "OauthMail.sublime-settings"
