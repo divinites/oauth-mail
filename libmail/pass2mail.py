@@ -8,7 +8,7 @@ from os.path import realpath
 
 
 _PACKAGE_PATH = dirname(dirname(dirname(realpath(__file__))))
-_CACHE_PATH = os.path.join(_PACKAGE_PATH, "Packages/User/Oauthmail.cache")
+_CACHE_PATH = os.path.join(_PACKAGE_PATH, "Packages/User/QuickMail.cache")
 
 
 def encrypt(strings):
@@ -55,6 +55,7 @@ class PassSession:
             root = {}
             root[encrypt("password")] = encrypt(self.password)
             root[encrypt("username")] = encrypt(self.username)
+            print(self.cache_file)
             with open(cache_path(self.cache_file), 'w') as cache_file:
                 json.dump(root, cache_file)
         else:

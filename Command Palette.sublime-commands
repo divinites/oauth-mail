@@ -1,37 +1,52 @@
 [
     {
-        "caption": "QuickMail: Write E-Mail", 
-        "args": {}, 
+        "caption": "QuickMail: Write E-Mail",
+        "args": {},
         "command": "mail_write"
-    }, 
+    },
     {
-        "caption": "QuickMail: Send E-Mail", 
-        "args": {}, 
+        "caption": "QuickMail: Send E-Mail",
+        "args": {},
         "command": "mail_send"
-    }, 
+    },
     {
-        "caption": "QuickMail: Send As Mail", 
-        "args": {}, 
+        "caption": "QuickMail: Send As Mail",
+        "args": {},
         "command": "send_as_mail"
-    }, 
+    },
     {
-        "caption": "QuickMail: Send as Attachment", 
-        "args": {}, 
+        "caption": "QuickMail: Send as Attachment",
+        "args": {},
         "command": "attach_this_file"
-    }, 
+    },
     {
-        "caption": "QuickMail: Add to Addressbook", 
-        "args": {}, 
+        "caption": "QuickMail: Add to Addressbook",
+        "args": {},
         "command": "mail_add_to_addressbook"
     },
     {
-        "caption": "QuickMail: Show E-Mail", 
-        "args": {}, 
+        "caption": "QuickMail: Show E-Mail",
+        "args": {},
         "command": "show_mail"
     },
     {
-        "caption": "QuickMail: Show E-Mail List", 
-        "args": {}, 
+        "caption": "QuickMail: Show E-Mail List",
+        "args": {},
         "command": "list_recent_mail"
+    },
+    {
+        "caption": "QuickMail: Reply",
+        "args": {},
+        "command": "mail_reply_one"
+    },
+    {
+        "caption": "QuickMail: Reply All",
+        "args": {},
+        "command": "mail_reply_all"
+    },
+    {
+        "caption": "QuickMail: Forward Mail",
+        "args": {},
+        "command": "mail_forward"
     }
 ]

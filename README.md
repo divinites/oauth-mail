@@ -11,11 +11,11 @@ QuickMail supports two authentication methods: oauth authentication and password
 
 The setting template is
 
-Preference -> Package Settings -> Oauth Mail -> Mail settings - Default
+Preference -> Package Settings -> Quick Mail -> Mail settings - Default
 
  you should copy it and paste to
 
-Preference -> Package Settings -> Oauth Mail -> Mail settings - User
+Preference -> Package Settings -> Quick Mail -> Mail settings - User
 
 to configure your own mail settings.
 
@@ -49,7 +49,7 @@ Google also provide a downloadable json-format configuration file (including cli
 
 If oauth method does not work for you, or you want to use email other than gmail and microsoft mail, you can use password Method.
 
-First, add an entry *"authentication": "password"* in OauthMail.sublime-settings, and do not forget entering the correct imap/smtp server.
+First, add an entry *"authentication": "password"* in QuickMail.sublime-settings, and do not forget entering the correct imap/smtp server.
 
 The first time you using this email, an input panel will show up and sequentially ask you to input your username and password. Input it in 10 second, and that's all. Username and password will be cached so you do not need to enter it again. (I will add an option to let you decide whether username and password should be cached or not)
 
@@ -59,7 +59,7 @@ The first time you using this email, an input panel will show up and sequentiall
 - **write_mail**: do exactly as the command name describes, this command will open a new view
 - **send_mail**:  do exactly as the command name, describes, this command will send the mail you write
 - **send_as_mail**: this command will add email header on top of all the content in current view
-- **show_mail_list**: this command will show the default email list, you can set it in user setting files.
+- **show_mail_list**: this command will show a panel, you can choose which mailbox to open, the default mailbox will be listed on the top.
 - **show_mail**: it would be better to use it after showing mail list, since this command with show an input panel, you can enter the mail ID (listed by **show_mail_list** command) and a new view will open and show your mail content.
 
 That's it. In the first time you use this plug-in, it will redirect your an authorization page, where you can click "yes" for authorization, after you see the page "the authentication flow has completed", you can close that page and return to Sublime Text. In the next time and what so ever, you can instantly send emails without any additional step, since the program will automatically deal with everything and refresh the access_token when necessary. 
@@ -67,11 +67,15 @@ That's it. In the first time you use this plug-in, it will redirect your an auth
 ## Future Development:
 
 1. This project is still in a very early stage, now it supports sending and receiving mails via Outlook mails and Gmails. You are welcome to send me request about more email server support, or, send me a pull request. 
-2. Next step: 
+
+2. Enhancement: 
    - Adding signature support
    - ~~Adding IMAP support, so users will be able to receive recent emails~~
-   - Adding reply and forwarding command
+   - ~~Adding reply, reply_all and forwarding command~~
    - ~~Using tmLanguage to define different colors when displaying email list~~
+   - Use Up-Down Arrow keys to browse mail list and Right arrow key to read email
+   - fold, not cut over-long title in the mail list
+   - ~~Add a panel for mailbox selection~~
 
 I have no intention to make it a full functional email agent with complicated rules, since we already have so many excellent programs. I will keep it light-weight, only necessary functions will be added.
 
@@ -86,6 +90,11 @@ I have no intention to make it a full functional email agent with complicated ru
 - v. 0.4.1 accepted by package control channel
 - v. 0.6.6 reconstruct the code and support username/password authentication
 - v. 0.8.0 add tmLanguage to color mail list
+- v. 0.8.5 a bunch of improvement
+    +  add reply, reply all, forward command
+    +  add a panel for mailbox selection
+    +  Email address are divided into two lines.
+    +  Mail will not initialize a new IMAP connection everytime, it will reuse the active connection if possible.
 
 ## Thanks:
 

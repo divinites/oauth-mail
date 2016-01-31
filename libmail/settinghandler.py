@@ -2,11 +2,19 @@ import sublime
 from imaplib import IMAP4_SSL_PORT
 
 
-_SETTING_FILE = "OauthMail.sublime-settings"
+NEW_SETTING_FILE = "QuickMail.sublime-settings"
+OLD_SETTING_FILE = "OauthMail.sublime-settings"
 
 
 def load_settings():
-    return sublime.load_settings(_SETTING_FILE)
+    old_setting = sublime.load_settings(NEW_SETTING_FILE)
+    new_setting = sublime.load_settings(OLD_SETTING_FILE)
+    if new_setting.get("Mailboxs"):
+        return new_setting
+    elif old_setting.get("Mailboxs"):
+        return old_setting
+    else:
+        raise FileNotFoundError("Please Configure your mailbox first!")
 
 
 def get_settings():
@@ -73,6 +81,9 @@ class SettingHandler:
             if mailbox["identity"] == identity:
                 return mailbox
         raise NameError("cannot find the relevant mailbox")
+
+    def get_mailbox_list(self):
+        return self.mailboxs
 
     def get_default_identity(self):
         for mailbox in self.mailboxs:

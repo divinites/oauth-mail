@@ -1,0 +1,9 @@
+.DS_Store
+*.out
+*.tags
+*.tags_sorted_by_file
+*.todo
+*.pyc
+*.sublime-project
+*.sublime-workspace
+__pycache__

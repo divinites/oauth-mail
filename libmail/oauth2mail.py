@@ -11,10 +11,10 @@ import time
 import re
 from os.path import dirname
 from os.path import realpath
+from .quicklog import QuickLog
 
-
-_PACKAGE_PATH = dirname(dirname(dirname(realpath(__file__))))
-_CACHE_PATH = os.path.join(_PACKAGE_PATH, "Packages/User/Oauthmail.cache")
+_PACKAGE_PATH = dirname(dirname(dirname(dirname(realpath(__file__)))))
+_CACHE_PATH = os.path.join(_PACKAGE_PATH, "Packages/User/QuickMail.cache")
 
 
 def cache_path(file_name):
@@ -60,7 +60,7 @@ class OauthMailSession(OAuth2Session):
                     self.auth_uri = value
                 if key == "token_uri":
                     self.token_uri = value
-            print("OauthMail >>> Finish reading secret file.")
+            QuickLog.log("Finish reading secret file.")
         else:
             _client_id = client_id
             self.client_secret = client_secret
@@ -74,7 +74,7 @@ class OauthMailSession(OAuth2Session):
         self.expires_in = None
         self.cache_file = None
         self.cache_flag = cache_flag
-        print("OauthMail >>> Oauth Session initialized.")
+        QuickLog.log("Oauth Session initialized.")
 
     def _token_is_cached(self):
         target = b64encode((self.client_id).encode('utf-8')).decode("utf-8")
@@ -136,7 +136,7 @@ class OauthMailSession(OAuth2Session):
         while not httpd:
             try:
                 httpd = RedirectServer(host_params, RedirectHandler)
-                print("OauthMail >>> HTTP redirect server created.")
+                QuickLog.log("HTTP redirect server created.")
             except:
                 host_params = list(host_params)
                 host_params[1] += 10
