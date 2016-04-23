@@ -94,15 +94,15 @@ class Sender:
         return False
 
     def start_smtp(self, smtp_server, smtp_port, tls_flag):
-        # try:
-        #     self.smtp_conn = smtplib.SMTP_SSL(smtp_server, smtp_port)
-        #     QuickLog.log("Try establish SSL SMTP connection...")
-        # except:
-        self.smtp_conn = smtplib.SMTP(smtp_server, smtp_port)
-        QuickLog.log("Try establish normal SMTP connection...")
-        if tls_flag:
-            QuickLog.log("Starting TLS...")
-            self.smtp_conn.starttls()
+        try:
+            self.smtp_conn = smtplib.SMTP_SSL(smtp_server, smtp_port)
+            QuickLog.log("Try establish SSL SMTP connection...")
+        except:
+            self.smtp_conn = smtplib.SMTP(smtp_server, smtp_port)
+            QuickLog.log("Try establish normal SMTP connection...")
+            if tls_flag:
+                QuickLog.log("Starting TLS...")
+                self.smtp_conn.starttls()
         self.smtp_conn.ehlo()
 
 
