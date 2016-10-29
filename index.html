@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Oauth-mail by divinites</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Oauth-mail</h1>
+      <h2 class="project-tagline">A light-weight email agent for Sublime Text 3</h2>
+      <a href="https://github.com/divinites/oauth-mail" class="btn">View on GitHub</a>
+      <a href="https://github.com/divinites/oauth-mail/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/divinites/oauth-mail/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="quickmail" class="anchor" href="#quickmail" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>QuickMail</h1>
+
+<p>I developed the quick-mail plug-in because I sometimes want to send directly what I wrote in sublime text, and I do not want to enter my password every time or store my plain-text email account name and password somewhere. That's why I choose to support oauthv2. With oauth method, the password will not be leaked to the third party, so it is basically safer. Nevertheless, there are still potential risks that other malicious plug-ins (if any) will get the cached "access_token" and obtain the access privileges that you grant to sublime text editor. All in all, Use this plug-in at your own risk, the author will not take any responsibility for any loss.  </p>
+
+<h2>
+<a id="set-up-steps" class="anchor" href="#set-up-steps" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Set-up steps:</h2>
+
+<p>Currently, quick-mail supports Microsoft outlook.com (including hotmail, livemail, etc.) and gmail <strong>and most of standard IMAP/SMTP mail servers</strong>.</p>
+
+<p>QuickMail supports two authentication methods: oauth authentication and password authentication.</p>
+
+<p>The setting template is</p>
+
+<p>Preference -&gt; Package Settings -&gt; Quick Mail -&gt; Mail settings - Default</p>
+
+<p>you should copy it and paste to</p>
+
+<p>Preference -&gt; Package Settings -&gt; Quick Mail -&gt; Mail settings - User</p>
+
+<p>to configure your own mail settings.</p>
+
+<h3>
+<a id="for-oauth-authentication-no-password-needed-much-safer" class="anchor" href="#for-oauth-authentication-no-password-needed-much-safer" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>For Oauth Authentication (No password needed, much safer)</h3>
+
+<h4>
+<a id="gmail-settings" class="anchor" href="#gmail-settings" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Gmail Settings:</h4>
+
+<p>Gmail setup is quite simple, </p>
+
+<ol>
+<li>Go to <a href="https://console.developers.google.com/project">Google dev centre</a>, create a project. Here is a nice tutorial if you are not familiar with that <a href="https://www.youtube.com/watch?v=o425vQXpigw">How to obtain Google Client ID and Secret</a>.</li>
+</ol>
+
+<p>Now, you have a client ID and Client Secret, copy and paste them into the Mail settings - User and it simply works.</p>
+
+<p>Google also provide a downloadable json-format configuration file (including client_id, client_secret, auth_uri and etc.). If you prefer to use this, you can download it and copy the full path, create an entry "client_secret_file" just before "client_id", and paste the path of your downloaded configuration file. It should also do the job.</p>
+
+<h4>
+<a id="microsoft-mail-settings" class="anchor" href="#microsoft-mail-settings" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Microsoft Mail settings:</h4>
+
+<ol>
+<li><p>go to <a href="https://account.live.com/developers/applications/index">microsoft dev centre</a>, create an application.</p></li>
+<li><p>In the API settings, you will find your client_id and client_secret, fill in the scope with ** wl.imap**, choose no for mobile client.</p></li>
+<li><p>Microsoft's policy about the redirect URI is quite tricky, it must be in the form <a href="http://www.xxx.com:%5Bport%5D">http://www.xxx.com:[port]</a>, so in the current version, I hard code <a href="http://www.mylocalhost.com:10111">http://www.mylocalhost.com:10111</a> as the default redirect url, please fill in the API settings as well. in the future version,  I will add an option entry so that users can choose there preferred names in <em>mail.sublime-settings</em>.</p></li>
+<li><p>modify your host file: for osx users, it is /etc/host, add a new line <em>127.0.0.1  <a href="http://www.mylocalhost.com">www.mylocalhost.com</a></em> at the end.</p></li>
+</ol>
+
+<h3>
+<a id="password-method" class="anchor" href="#password-method" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Password Method</h3>
+
+<p>If oauth method does not work for you, or you want to use email other than gmail and microsoft mail, you can use password Method.</p>
+
+<p>First, add an entry <em>"authentication": "password"</em> in QuickMail.sublime-settings, and do not forget entering the correct imap/smtp server.</p>
+
+<p>The first time you using this email, an input panel will show up and sequentially ask you to input your username and password. Input it in 10 second, and that's all. Username and password will be cached so you do not need to enter it again. (I will add an option to let you decide whether username and password should be cached or not)</p>
+
+<h2>
+<a id="commands" class="anchor" href="#commands" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Commands:</h2>
+
+<ul>
+<li>
+<strong>write_mail</strong>: do exactly as the command name describes, this command will open a new view</li>
+<li>
+<strong>send_mail</strong>:  do exactly as the command name, describes, this command will send the mail you write</li>
+<li>
+<strong>send_as_mail</strong>: this command will add email header on top of all the content in current view</li>
+<li>
+<strong>show_mail_list</strong>: this command will show a panel, you can choose which mailbox to open, the default mailbox will be listed on the top.</li>
+<li>
+<strong>show_mail</strong>: it would be better to use it after showing mail list, since this command with show an input panel, you can enter the mail ID (listed by <strong>show_mail_list</strong> command) and a new view will open and show your mail content.</li>
+</ul>
+
+<p>That's it. In the first time you use this plug-in, it will redirect your an authorization page, where you can click "yes" for authorization, after you see the page "the authentication flow has completed", you can close that page and return to Sublime Text. In the next time and what so ever, you can instantly send emails without any additional step, since the program will automatically deal with everything and refresh the access_token when necessary. </p>
+
+<h2>
+<a id="future-development" class="anchor" href="#future-development" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Future Development:</h2>
+
+<ol>
+<li><p>This project is still in a very early stage, now it supports sending and receiving mails via Outlook mails and Gmails. You are welcome to send me request about more email server support, or, send me a pull request. </p></li>
+<li>
+<p>Enhancement: </p>
+
+<ul>
+<li>Adding signature support</li>
+<li><del>Adding IMAP support, so users will be able to receive recent emails</del></li>
+<li><del>Adding reply, reply_all and forwarding command</del></li>
+<li><del>Using tmLanguage to define different colors when displaying email list</del></li>
+<li>Use Up-Down Arrow keys to browse mail list and Right arrow key to read email</li>
+<li>fold, not cut over-long title in the mail list</li>
+<li><del>Add a panel for mailbox selection</del></li>
+</ul>
+</li>
+</ol>
+
+<p>I have no intention to make it a full functional email agent with complicated rules, since we already have so many excellent programs. I will keep it light-weight, only necessary functions will be added.</p>
+
+<h2>
+<a id="change-logs" class="anchor" href="#change-logs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Change Logs:</h2>
+
+<ul>
+<li>v. 0.1.1 The first commitment</li>
+<li>v. 0.2.0 re-write using oauthmail API</li>
+<li>v. 0.3.0 IMAP fully worked</li>
+<li>v. 0.3.1 minor changes</li>
+<li>v. 0.3.5 correct some minor errors</li>
+<li>v. 0.4.0 add YAML support (still working on it)</li>
+<li>v. 0.4.1 accepted by package control channel</li>
+<li>v. 0.6.6 reconstruct the code and support username/password authentication</li>
+<li>v. 0.8.0 add tmLanguage to color mail list</li>
+<li>v. 0.8.5 a bunch of improvement
+
+<ul>
+<li> add reply, reply all, forward command</li>
+<li> add a panel for mailbox selection</li>
+<li> Email address are divided into two lines.</li>
+<li> Mail will not initialize a new IMAP connection everytime, it will reuse the active connection if possible.</li>
+</ul>
+</li>
+</ul>
+
+<h2>
+<a id="thanks" class="anchor" href="#thanks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Thanks:</h2>
+
+<p>Special thanks to <a href="https://bitbucket.org/klorenz/sublimeemail/">klorenz's project sublime-email</a> and many stack-overflow answers.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/divinites/oauth-mail">Oauth-mail</a> is maintained by <a href="https://github.com/divinites">divinites</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
