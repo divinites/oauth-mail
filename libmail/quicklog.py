@@ -1,4 +1,4 @@
-FLAG = "QuickMail "
+FLAG = "Gmail "
 PROMPT = ">>> "
 
 

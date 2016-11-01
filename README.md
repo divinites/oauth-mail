@@ -1,21 +1,21 @@
-# QuickMail
+# GMail
 
-I developed the quick-mail plug-in because I sometimes want to send directly what I wrote in sublime text, and I do not want to enter my password every time or store my plain-text email account name and password somewhere. That's why I choose to support oauthv2. With oauth method, the password will not be leaked to the third party, so it is basically safer. Nevertheless, there are still potential risks that other malicious plug-ins (if any) will get the cached "access_token" and obtain the access privileges that you grant to sublime text editor. All in all, Use this plug-in at your own risk, the author will not take any responsibility for any loss.  
+I developed this plug-in because I sometimes want to send directly what I wrote in sublime text, and I do not want to enter my password every time or store my plain-text email account name and password somewhere. That's why I choose to support oauthv2. With oauth method, the password will not be leaked to the third party, so it is basically safer. Nevertheless, there are still potential risks that other malicious plug-ins (if any) will get the cached "access_token" and obtain the access privileges that you grant to sublime text editor. All in all, Use this plug-in at your own risk, the author will not take any responsibility for any loss.
 
 ## Set-up steps:
 
-Currently, quick-mail supports Microsoft outlook.com (including hotmail, livemail, etc.) and gmail **and most of standard IMAP/SMTP mail servers**.
+Currently, Gmail supports Microsoft outlook.com (including hotmail, livemail, etc.) and gmail **and most of standard IMAP/SMTP mail servers**.
 
-QuickMail supports two authentication methods: oauth authentication and password authentication.
+GMail supports two authentication methods: oauth authentication and password authentication.
 
 
 The setting template is
 
-Preference -> Package Settings -> Quick Mail -> Mail settings - Default
+Preference -> Package Settings -> GMail -> Mail settings - Default
 
  you should copy it and paste to
 
-Preference -> Package Settings -> Quick Mail -> Mail settings - User
+Preference -> Package Settings -> GMail -> Mail settings - User
 
 to configure your own mail settings.
 
@@ -25,7 +25,7 @@ to configure your own mail settings.
 
 #### Gmail Settings:
 
-Gmail setup is quite simple, 
+Gmail setup is quite simple,
 
 1. Go to [Google dev centre](https://console.developers.google.com/project), create a project. Here is a nice tutorial if you are not familiar with that [How to obtain Google Client ID and Secret](https://www.youtube.com/watch?v=o425vQXpigw).
 
@@ -45,7 +45,7 @@ Google also provide a downloadable json-format configuration file (including cli
 4. modify your host file: for osx users, it is /etc/host, add a new line *127.0.0.1  www.mylocalhost.com* at the end.
 
 
-### Password Method 
+### Password Method
 
 If oauth method does not work for you, or you want to use email other than gmail and microsoft mail, you can use password Method.
 
@@ -62,13 +62,13 @@ The first time you using this email, an input panel will show up and sequentiall
 - **show_mail_list**: this command will show a panel, you can choose which mailbox to open, the default mailbox will be listed on the top.
 - **show_mail**: it would be better to use it after showing mail list, since this command with show an input panel, you can enter the mail ID (listed by **show_mail_list** command) and a new view will open and show your mail content.
 
-That's it. In the first time you use this plug-in, it will redirect your an authorization page, where you can click "yes" for authorization, after you see the page "the authentication flow has completed", you can close that page and return to Sublime Text. In the next time and what so ever, you can instantly send emails without any additional step, since the program will automatically deal with everything and refresh the access_token when necessary. 
+That's it. In the first time you use this plug-in, it will redirect your an authorization page, where you can click "yes" for authorization, after you see the page "the authentication flow has completed", you can close that page and return to Sublime Text. In the next time and what so ever, you can instantly send emails without any additional step, since the program will automatically deal with everything and refresh the access_token when necessary.
 
 ## Future Development:
 
-1. This project is still in a very early stage, now it supports sending and receiving mails via Outlook mails and Gmails. You are welcome to send me request about more email server support, or, send me a pull request. 
+1. This project is still in a very early stage, now it supports sending and receiving mails via Outlook mails and Gmails. You are welcome to send me request about more email server support, or, send me a pull request.
 
-2. Enhancement: 
+2. Enhancement:
    - Adding signature support
    - ~~Adding IMAP support, so users will be able to receive recent emails~~
    - ~~Adding reply, reply_all and forwarding command~~

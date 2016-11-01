@@ -10,11 +10,11 @@
 				"id": "package-settings",
 				"children": [
 					{
-						"caption": "Quick Mail",
+						"caption": "Gmail",
 						"children": [
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/QuickMail/QuickMail.sublime-keymap"},
+								"args": {"file": "${packages}/Gmail/QuickMail.sublime-keymap"},
 								"caption": "Keymap – Default"
 							},
 							{
@@ -25,7 +25,7 @@
 							{ "caption": "-" },
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/QuickMail/QuickMail.sublime-settings"},
+								"args": {"file": "${packages}/Gmail/QuickMail.sublime-settings"},
 								"caption": "Mail Settings - Default"
 							},
 							{

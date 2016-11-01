@@ -104,7 +104,7 @@ def check_mailbox_type(identity):
         if result:
             QuickLog.log("" + name + " Mailbox detected")
             return name
-    QuickLog.log(" Not an QuickMail, will need Username/Password.")
+    QuickLog.log(" Not support oauth, will need Username/Password.")
     return "generic"
 
 

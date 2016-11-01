@@ -1,51 +1,51 @@
 [
     {
-        "caption": "QuickMail: Write E-Mail",
+        "caption": "Gmail: Write E-Mail",
         "args": {},
         "command": "mail_write"
     },
     {
-        "caption": "QuickMail: Send E-Mail",
+        "caption": "Gmail: Send E-Mail",
         "args": {},
         "command": "mail_send"
     },
     {
-        "caption": "QuickMail: Send As Mail",
+        "caption": "Gmail: Send As Mail",
         "args": {},
         "command": "send_as_mail"
     },
     {
-        "caption": "QuickMail: Send as Attachment",
+        "caption": "Gmail: Send as Attachment",
         "args": {},
         "command": "attach_this_file"
     },
     {
-        "caption": "QuickMail: Add to Addressbook",
+        "caption": "Gmail: Add to Addressbook",
         "args": {},
         "command": "mail_add_to_addressbook"
     },
     {
-        "caption": "QuickMail: Show E-Mail",
+        "caption": "Gmail: Show E-Mail",
         "args": {},
         "command": "show_mail"
     },
     {
-        "caption": "QuickMail: Show E-Mail List",
+        "caption": "Gmail: Show E-Mail List",
         "args": {},
         "command": "list_recent_mail"
     },
     {
-        "caption": "QuickMail: Reply",
+        "caption": "Gmail: Reply",
         "args": {},
         "command": "mail_reply_one"
     },
     {
-        "caption": "QuickMail: Reply All",
+        "caption": "Gmail: Reply All",
         "args": {},
         "command": "mail_reply_all"
     },
     {
-        "caption": "QuickMail: Forward Mail",
+        "caption": "Gmail: Forward Mail",
         "args": {},
         "command": "mail_forward"
     }
