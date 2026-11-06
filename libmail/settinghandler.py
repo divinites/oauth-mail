@@ -106,6 +106,15 @@ class SettingHandler:
     def get_client_secret(self, identity):
         return self.get_mailbox(identity)["parameters"]["client_secret"]
 
+    def get_location(self, identity):
+        """IMAP folder to read and search.
+
+        The mailbox parameters may carry a 'location' (for example
+        "[Gmail]/All Mail" or "[Gmail]/Trash"); without one this stays INBOX,
+        which is what every call site used to hardcode.
+        """
+        return self.get_mailbox(identity)["parameters"].get("location", "INBOX")
+
     def get_imap(self, identity):
         mailbox = self.get_mailbox(identity)
         if "imap_port" in mailbox["parameters"].keys():
