@@ -1,5 +1,6 @@
 from .libmail.utils import *
 from .libmail import settinghandler
+from .libmail.mailbox import from_dealing, subject_dealing
 from .libmail.quicklog import QuickLog
 import sublime_plugin
 import threading
@@ -12,6 +13,15 @@ from datetime import timedelta
 LIST_SYNTAX_PATH = "Packages/{}/list.tmLanguage".format(__package__)
 LIST_THEME_PATH = "Packages/{}/list.tmTheme".format(__package__)
 MAIL_SYNTAX_PATH = "Packages/{}/mail.tmLanguage".format(__package__)
+
+
+def unfold_header(value):
+    # A folded header keeps its CRLF in the parsed value: a To: split before the
+    # address arrives as "A Name\r\n <a@b>", and printing that as-is puts a
+    # carriage return in the middle of the view line. The fold is never part of
+    # the value - the continuation whitespace follows the break - so dropping
+    # the breaks joins the halves the way the sender meant them.
+    return str(value).replace('\r', '').replace('\n', '')
 
 
 class ShowMailCommand(sublime_plugin.WindowCommand):
@@ -166,9 +176,15 @@ class PrintListInView(threading.Thread):
         header_list = zip(header_list[0], header_list[1])
         for msg in reversed(list(header_list)):
             mail_id = msg[0]
-            mail_subject = msg[1]["subject"]
-            mail_from = parseaddr(msg[1]["From"])
-            mail_date = msg[1]["Date"]
+            # fetch_header() returns the parser's raw headers, so these still
+            # carry the encoded words (?UTF-8?B?...?=) and their folding. The
+            # message view decoded through these two helpers and the list did
+            # not, which is why the same name showed correctly in one and raw in
+            # the other.
+            mail_subject = subject_dealing(msg[1]["subject"])
+            mail_from = parseaddr(
+                unfold_header(from_dealing(msg[1]["From"], "full")))
+            mail_date = unfold_header(msg[1]["Date"])
             if len(mail_subject) > 60:
                 mail_subject = mail_subject[:57] + '...'
             first_line, second_line = split_line(mail_subject)

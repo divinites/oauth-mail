@@ -40,28 +40,18 @@ def date_dealing(raw_date_str):
 
 def from_dealing(from_str, flag="name"):
     real_from = ''
-    decoded_from = decode_header(from_str)
-    tem_str = []
     address = ""
-    for i in range(len(decoded_from)):
-        if decoded_from[i][1] is None:
-            tem_str.append(decoded_from[i][0])
-        else:
-            try:
-                tem_str.append(decoded_from[0][0].decode(decoded_from[
-                    0][1]))
-            except:
-                tem_str.append(decoded_from[0][0])
-    new_tem_str = []
-    for i in tem_str:
-        try:
-            new_tem_str.append(i.decode('utf-8'))
-        except:
-            new_tem_str.append(i)
+    # decode_header returns one (bytes, charset) pair per encoded word, yet the
+    # loop this replaces decoded decoded_from[0] on every pass: a name spelled
+    # as several encoded words repeated the first one and dropped the others, and
+    # the except branch kept the raw =?UTF-8?B?...?= token as display text.
+    # make_header decodes each part with its own charset and joins them in order.
     try:
-        address = ' '.join(new_tem_str)
-    except:
-        pass
+        address = str(email.header.make_header(decode_header(from_str)))
+    except (LookupError, UnicodeError):
+        # An unknown or broken charset cannot be decoded; the header as it
+        # arrived is still better than failing the whole message.
+        address = from_str
     if flag == "full":
         return address
     else:
