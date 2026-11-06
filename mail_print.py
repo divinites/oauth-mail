@@ -131,8 +131,9 @@ class FetchMailThread(threading.Thread):
         self.identity = identity
         self.mail_queue = out_mail_queue
         self.body = None
-        if location is None:
-            self.location = 'INBOX'
+        # Every caller passes a folder; fall back only when it is missing, so the
+        # attribute always exists (it did not, and every message open raised).
+        self.location = location if location else 'INBOX'
 
     def run(self):
         mailbox = ID_TO_IMAP[self.identity].get()
