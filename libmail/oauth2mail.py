@@ -13,8 +13,15 @@ from os.path import dirname
 from os.path import realpath
 from .quicklog import QuickLog
 
-_PACKAGE_PATH = dirname(dirname(dirname(dirname(realpath(__file__)))))
-_CACHE_PATH = os.path.join(_PACKAGE_PATH, "Packages/User/QuickMail.cache")
+import sublime
+
+# The token cache must live under Sublime's own cache directory. Counting
+# dirname() levels only works for one install layout: with the package installed
+# as a .sublime-package (or reached through a junction) the count lands outside
+# Data\, the saved token is never found, and OAuth consent runs again on every
+# session - on the main thread, where _acquire_code() blocks in
+# httpd.handle_request() until the browser redirects.
+_CACHE_PATH = os.path.join(sublime.cache_path(), "QuickMail")
 
 
 def cache_path(file_name):
@@ -46,7 +53,7 @@ class OauthMailSession(OAuth2Session):
                  cache_flag=True, **kwargs):
         _client_id = None
         if not os.path.exists(_CACHE_PATH):
-            os.makedirs(_CACHE_PATH)
+            os.makedirs(_CACHE_PATH, exist_ok=True)
         if client_secret_json_file:
             with open(client_secret_json_file, 'r') as f:
                 secret_file = json.load(f)

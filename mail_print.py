@@ -76,9 +76,14 @@ class MailBoxConnectionThread(threading.Thread):
     def __init__(self, identity):
         threading.Thread.__init__(self)
         self.identity = identity
-        self.mailbox = MAIL_CLASS_DICT[check_mailbox_type(identity)](identity)
+        # Constructed inside run(), not here. Building the account object runs the
+        # OAuth consent handshake, which blocks on a local redirect server - doing
+        # that in __init__ meant it ran on Sublime's main thread and froze the
+        # editor until the browser redirected (2026-11-06).
+        self.mailbox = None
 
     def run(self):
+        self.mailbox = MAIL_CLASS_DICT[check_mailbox_type(self.identity)](self.identity)
         self.mailbox.start_imap(self.mailbox.imap_server,
                                 self.mailbox.imap_port, self.mailbox.tls_flag)
         self.authenticate()
