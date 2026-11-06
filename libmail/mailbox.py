@@ -10,6 +10,21 @@ from .quicklog import QuickLog
 import queue
 
 
+def _select_folder(conn, location):
+    """SELECT a folder, quoting the name when needed.
+
+    IMAP wants the mailbox name quoted for names such as `[Gmail]/Trash`.
+    Passing it bare makes the server refuse, and the following search then runs
+    against whatever folder was selected before (usually INBOX) - which looks
+    exactly like the folder setting being ignored (2026-11-06).
+    """
+    name = location if location.startswith('"') else '"%s"' % location
+    status, count = conn.select(name)
+    if status != 'OK':
+        QuickLog.log("cannot select folder %r: %s" % (location, status))
+    return status, count
+
+
 def auto_decode(str_body):
     if str_body:
         try:
@@ -130,7 +145,7 @@ class Receiver:
         return False
 
     def fetch_header(self, email_id, location='INBOX'):
-        status, header = self.imap_conn.select(location)
+        status, header = _select_folder(self.imap_conn, location)
         header = None
         t, header = self.imap_conn.fetch(email_id, '(BODY[HEADER])')
         header_data = header[0][1].decode('utf-8', 'ignore')
@@ -141,7 +156,7 @@ class Receiver:
     def fetch_email(self, email_id=None, location='INBOX'):
 
         mail_body = None
-        status, last_email_sequence = self.imap_conn.select(location)
+        status, last_email_sequence = _select_folder(self.imap_conn, location)
         if email_id is None:
             target_email_id = last_email_sequence[0].decode('utf-8', 'ignore')
         else:
@@ -177,7 +192,7 @@ class Receiver:
         return (msge)
 
     def search_email(self, criteria, location='INBOX'):
-        status, email_sequence = self.imap_conn.select(location)
+        status, email_sequence = _select_folder(self.imap_conn, location)
         t, id_sequence = self.imap_conn.search(None, criteria)
         mail_ids = id_sequence[0].decode('utf-8').split(' ')
         return mail_ids

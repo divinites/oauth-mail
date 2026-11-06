@@ -29,7 +29,8 @@ class ShowMailCommand(sublime_plugin.WindowCommand):
         else:
             QuickLog.log("Use previous mailbox object.")
         mail_queue = queue.Queue()
-        fetch_mail = FetchMailThread(identity, mail_id, mail_queue)
+        fetch_mail = FetchMailThread(identity, mail_id, mail_queue,
+                                     settinghandler.get_settings().get_location(identity))
         QuickLog.log("Fetching mails...")
         fetch_mail.start()
         print_in_view = PrintMailInView(mail_queue)
@@ -66,7 +67,8 @@ class ConnectMailboxCommand(sublime_plugin.WindowCommand):
             IMAP_thread = MailBoxConnectionThread(identity)
             IMAP_thread.start()
         list_queue = queue.Queue()
-        list_mail = GetEmailListThread(identity, list_queue, date_string, None)
+        list_mail = GetEmailListThread(identity, list_queue, date_string,
+                                       _SETTINGS.get_location(identity))
         list_mail.start()
         print_in_view = PrintListInView(identity, list_queue)
         print_in_view.start()
@@ -112,7 +114,7 @@ class GetEmailListThread(threading.Thread):
 
     def get_mail_list(self):
         mailbox = ID_TO_IMAP[self.identity].get()
-        mail_list = mailbox.fetch_header_list(self.date_string)
+        mail_list = mailbox.fetch_header_list(self.date_string, self.location)
         QuickLog.log("Fetching mail headers...")
         self.list_queue.put(mail_list)
         ID_TO_IMAP[self.identity].put(mailbox)

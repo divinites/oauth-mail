@@ -11,6 +11,7 @@
                                         "signature": "--XX",
                                         "client_id": "XXXXX",
                                         "client_secret": "XXXXX",
+                                        "location": "INBOX",
                                         "tls": "yes",
                                         "default": "yes"
                                       }
