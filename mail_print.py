@@ -210,11 +210,11 @@ class PrintMailInView(threading.Thread):
         view = sublime.active_window().new_file()
         VIEW_TO_MAIL[view.id()] = msg
         snippet = ""
-        snippet += "From   : {}\n".format(msg['address'])
-        snippet += "To     : {}\n".format(msg["to"])
-        snippet += "Cc     : {}\n".format(msg["cc"])
-        snippet += "Bcc    : {}\n".format(msg["bcc"])
-        snippet += "Subject: {}\n".format(msg["subject"])
+        snippet += "From   : {}\n".format(unfold_header(msg['address']))
+        snippet += "To     : {}\n".format(unfold_header(msg["to"]))
+        snippet += "Cc     : {}\n".format(unfold_header(msg["cc"]))
+        snippet += "Bcc    : {}\n".format(unfold_header(msg["bcc"]))
+        snippet += "Subject: {}\n".format(unfold_header(msg["subject"]))
         snippet += "\n"
         snippet += "{}\n".format(msg["body"])
         view.set_syntax_file(MAIL_SYNTAX_PATH)
