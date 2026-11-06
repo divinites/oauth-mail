@@ -4,6 +4,9 @@ from imaplib import IMAP4_SSL_PORT
 
 NEW_SETTING_FILE = "QuickMail.sublime-settings"
 OLD_SETTING_FILE = "OauthMail.sublime-settings"
+# The package was renamed to Gmail but the settings file kept its old name, so
+# a user who creates Gmail.sublime-settings is read here rather than ignored.
+GMAIL_SETTING_FILE = "Gmail.sublime-settings"
 
 
 def load_settings():
@@ -14,6 +17,11 @@ def load_settings():
     elif old_setting.get("Mailboxs"):
         return old_setting
     else:
+        # Every existing user has the QuickMail-named file, but someone who
+        # installed the package as Gmail writes the name the palette shows.
+        gmail_setting = sublime.load_settings(GMAIL_SETTING_FILE)
+        if gmail_setting.get("Mailboxs"):
+            return gmail_setting
         raise FileNotFoundError("Please Configure your mailbox first!")
 
 

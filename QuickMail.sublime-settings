@@ -1,3 +1,4 @@
+// This file predates the rename to Gmail, so it keeps its old name; a Gmail.sublime-settings file is read instead when this one has no mailboxes.
 {
     "Mailboxs": [
 

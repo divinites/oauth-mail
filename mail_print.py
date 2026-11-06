@@ -13,6 +13,27 @@ LIST_SYNTAX_PATH = "Packages/{}/list.tmLanguage".format(__package__)
 LIST_THEME_PATH = "Packages/{}/list.tmTheme".format(__package__)
 MAIL_SYNTAX_PATH = "Packages/{}/mail.tmLanguage".format(__package__)
 
+# One list view per identity. Every run used to open another tab and leave it
+# marked modified, so a dozen runs left a dozen tabs and closing them asked to
+# save each one; keeping the open view here lets the next run refresh it.
+LIST_VIEWS = {}
+
+
+class ReplaceViewContentCommand(sublime_plugin.TextCommand):
+    # Erase and insert under a single edit, so a reused view shows the new list
+    # instead of the new list appended below the old one.
+    def run(self, edit, contents):
+        self.view.erase(edit, sublime.Region(0, self.view.size()))
+        self.view.insert(edit, 0, contents)
+
+
+def fill_view(view, contents):
+    # Generated mail is a snapshot, not a document. Scratch plus a cleared
+    # modified flag stops Sublime from offering to save it when it is closed.
+    view.run_command("replace_view_content", {"contents": contents})
+    view.set_scratch(True)
+    view.set_modified(False)
+
 
 class ShowMailCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
@@ -177,10 +198,16 @@ class PrintListInView(threading.Thread):
             snippet += "{:<8}\t{:<30}\t\t{:<40}\t\t{:^15}\n".format(
                 '', mail_from[1], second_line, mail_date[11:])
         snippet += "\n"
-        view = sublime.active_window().new_file()
-        view.set_syntax_file(LIST_SYNTAX_PATH)
-        view.settings().set('color_scheme', LIST_THEME_PATH)
-        view.run_command("insert_snippet", {"contents": snippet})
+        window = sublime.active_window()
+        view = LIST_VIEWS.get(self.identity)
+        if view is None or not view.is_valid() or view.window() is not window:
+            # Nothing to refresh - the view was closed or the window changed.
+            view = window.new_file()
+            view.set_syntax_file(LIST_SYNTAX_PATH)
+            view.settings().set('color_scheme', LIST_THEME_PATH)
+            LIST_VIEWS[self.identity] = view
+        fill_view(view, snippet)
+        window.focus_view(view)
         QuickLog.log("Mail list printed.")
 
 
@@ -202,7 +229,7 @@ class PrintMailInView(threading.Thread):
         snippet += "\n"
         snippet += "{}\n".format(msg["body"])
         view.set_syntax_file(MAIL_SYNTAX_PATH)
-        view.run_command("insert_snippet", {"contents": snippet})
+        fill_view(view, snippet)
         QuickLog.log("Mail printed.")
 
 
