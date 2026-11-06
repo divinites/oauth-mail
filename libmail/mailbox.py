@@ -23,12 +23,12 @@ def auto_decode(str_body):
 
 
 def subject_dealing(raw_subject):
-    subject = ''
-    decoded_subject = decode_header(raw_subject)
-    if decoded_subject[0][1] is not None:
-        subject = decoded_subject[0][0].decode(decoded_subject[0][1])
-    else:
-        subject = decoded_subject[0][0]
+    # decode_header returns one (bytes, charset) pair per encoded word, and for
+    # an unencoded run of text a (str, None) pair. Reading only [0] kept the
+    # first word and threw the rest away, and the (str, None) form raised
+    # AttributeError on .decode(). make_header decodes each part with its own
+    # charset and joins them in order.
+    subject = str(email.header.make_header(decode_header(raw_subject)))
     subject = subject.replace('\r', '')
     subject = subject.replace('\n', '')
     return subject
