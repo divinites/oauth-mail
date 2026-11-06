@@ -21,6 +21,12 @@ def cache_path(file_name):
     return os.path.join(_CACHE_PATH, file_name)
 
 
+# How long the browser may take to come back with the consent redirect before
+# _acquire_code() stops waiting. Consent nobody completes is a normal event (a
+# closed tab, a denied request, the wrong Google account), so it needs a bound.
+_CONSENT_TIMEOUT = 300
+
+
 def find_type(client_secret_file):
     app_type = ''
     for key in client_secret_file.keys():
@@ -145,9 +151,28 @@ class OauthMailSession(OAuth2Session):
             host_params[1])
         auth_url = self._generate_auth_url(**kwargs)[0]
         webbrowser.open(auth_url, new=1, autoraise=True)
-        httpd.handle_request()
-        code = httpd.query_params["code"]
-        return code
+        # handle_request() waits for one request, and without a timeout it waited
+        # for as long as the browser never came back: an abandoned consent left
+        # this thread blocked forever and the listening socket open until the
+        # process died. With a timeout it returns without a request, and
+        # query_params keeps its empty default, which is the only signal that
+        # nothing arrived.
+        httpd.timeout = _CONSENT_TIMEOUT
+        try:
+            httpd.handle_request()
+        finally:
+            httpd.server_close()
+        query = httpd.query_params
+        if "code" not in query:
+            if query:
+                message = "Oauth consent was not granted: {}".format(query)
+            else:
+                message = ("Oauth consent gave up after {} seconds: the "
+                           "browser never redirected back.").format(
+                               _CONSENT_TIMEOUT)
+            QuickLog.log(message)
+            raise TimeoutError(message)
+        return query["code"]
 
     def _get_token(self, code, save=True):
         params = {}
