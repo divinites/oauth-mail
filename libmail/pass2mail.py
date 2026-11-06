@@ -8,7 +8,8 @@ from os.path import realpath
 
 
 _PACKAGE_PATH = dirname(dirname(dirname(realpath(__file__))))
-_CACHE_PATH = os.path.join(_PACKAGE_PATH, "Packages/User/QuickMail.cache")
+# Same reason as oauth2mail.py: Sublime's cache directory, not a counted path.
+_CACHE_PATH = os.path.join(sublime.cache_path(), "QuickMail")
 
 
 def encrypt(strings):
@@ -30,7 +31,7 @@ class PassSession:
         self.password = None
         self.cache_file = encrypt(self.identity)
         if not os.path.exists(_CACHE_PATH):
-            os.makedirs(_CACHE_PATH)
+            os.makedirs(_CACHE_PATH, exist_ok=True)
 
     def _is_cached(self):
         target = b64encode((self.identity).encode('utf-8')).decode("utf-8")
